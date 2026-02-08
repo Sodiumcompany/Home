@@ -7,32 +7,135 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #050505;
+  --bg: #050505; /* background color */
   --purple: #a855f7;
   --blue: #6366f1;
   --glass: rgba(255,255,255,0.05);
   --border: rgba(255,255,255,0.15);
 }
+
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
 body { background-color: var(--bg); color:white; min-height:100vh; overflow-x:hidden; }
-.blob { position:fixed; width:500px; height:500px; border-radius:50%; background: radial-gradient(circle, rgba(168,85,247,0.15), transparent 70%); filter: blur(80px); z-index:-1; animation: move 20s infinite alternate; }
-@keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(20%,20%); } }
-.container { max-width:1200px; margin:0 auto; padding:100px 20px; display:flex; justify-content:center; align-items:center; flex-direction:column; gap:30px; }
-.glass-card { background: var(--glass); backdrop-filter: blur(20px); border:1px solid var(--border); border-radius:24px; padding:40px; box-shadow:0 8px 32px rgba(0,0,0,0.37); min-width:300px; max-width:450px; animation: fadeIn 1s ease forwards; position: relative; }
-h2 { text-align:center; margin-bottom:20px; font-weight:600; font-size:28px; }
-input { width:100%; padding:12px 40px 12px 12px; margin-bottom:15px; background: rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; color:white; outline:none; transition:0.3s; }
-input:focus { border-color: var(--purple); box-shadow:0 0 10px rgba(168,85,247,0.5); }
+
+.blob {
+  position:fixed;
+  width:500px;
+  height:500px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(168,85,247,0.15), transparent 70%);
+  filter: blur(80px);
+  z-index:-1;
+  animation: move 20s infinite alternate;
+}
+
+@keyframes move {
+  from { transform: translate(-10%, -10%); }
+  to { transform: translate(20%,20%); }
+}
+
+.container {
+  max-width:1200px;
+  margin:0 auto;
+  padding:100px 20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  gap:30px;
+}
+
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:40px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.37);
+  min-width:300px;
+  max-width:450px;
+  animation: fadeIn 1s ease forwards;
+  position: relative;
+}
+
+h2 {
+  text-align:center;
+  margin-bottom:20px;
+  font-weight:600;
+  font-size:28px;
+}
+
+input, textarea {
+  width:100%;
+  padding:12px 40px 12px 12px;
+  margin-bottom:15px;
+  background: rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:white;
+  outline:none;
+  transition:0.3s;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--purple);
+  box-shadow:0 0 10px rgba(168,85,247,0.5);
+}
+
+textarea { resize:none; padding:12px; }
+
 .password-wrapper { position: relative; }
-.eye-icon { position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:18px; opacity:0.7; }
-button { padding:12px 24px; border-radius:8px; border:none; cursor:pointer; font-weight:600; transition:0.3s; }
-.btn-primary { background: var(--purple); color:white; width:100%; }
-.btn-primary:hover { box-shadow:0 0 20px rgba(168,85,247,0.6); transform: scale(1.02); }
-.switch-btn { background:transparent; color:white; text-decoration:underline; cursor:pointer; margin-top:10px; display:block; text-align:center; }
-textarea { width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid var(--border); background: rgba(255,255,255,0.05); color:white; resize:none; }
+.eye-icon {
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  font-size:18px;
+  opacity:0.7;
+}
+
+button {
+  padding:12px 24px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  transition:0.3s;
+}
+
+.btn-primary {
+  background: var(--purple);
+  color:white;
+  width:100%;
+}
+.btn-primary:hover {
+  box-shadow:0 0 20px rgba(168,85,247,0.6);
+  transform: scale(1.02);
+}
+
+.switch-btn {
+  background: transparent;
+  color: white;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 10px;
+  display: block;
+  text-align: center;
+  border: none;
+  font-size: 14px;
+  padding: 0;
+  transition: 0.2s;
+}
+.switch-btn:hover {
+  color: var(--purple);
+  transform: scale(1.05);
+}
+
 @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
 </style>
 </head>
 <body>
+
 <div class="blob"></div>
 <div class="container">
 
@@ -45,7 +148,7 @@ textarea { width:100%; padding:12px; margin-bottom:15px; border-radius:8px; bord
       <span class="eye-icon" onclick="togglePassword('login-pass')">👁️</span>
     </div>
     <button class="btn-primary" onclick="handleLogin()">Login</button>
-    <span class="switch-btn" onclick="toggleCard('signup')">Don&apos;t have an account? Sign Up</span>
+    <button class="switch-btn" onclick="toggleCard('signup')">Don't have an account? Sign Up</button>
   </div>
 
   <!-- Signup Card -->
@@ -58,7 +161,7 @@ textarea { width:100%; padding:12px; margin-bottom:15px; border-radius:8px; bord
       <span class="eye-icon" onclick="togglePassword('signup-pass')">👁️</span>
     </div>
     <button class="btn-primary" onclick="handleSignup()">Create Account</button>
-    <span class="switch-btn" onclick="toggleCard('login')">Already have an account? Login</span>
+    <button class="switch-btn" onclick="toggleCard('login')">Already have an account? Login</button>
   </div>
 
   <!-- Role Request Card -->
@@ -84,7 +187,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAUVsLH-YZdbhnH5U8tuS-31bTrPz6CZ8g",
   authDomain: "sodium-b5392.firebaseapp.com",
   projectId: "sodium-b5392",
-  storageBucket: "sodium-b5392.firebasestorage.app",
+  storageBucket: "sodium-b5392.appspot.com",
   messagingSenderId: "21034072519",
   appId: "1:21034072519:web:258c82eb4cfed599c301e2",
   measurementId: "G-E0F44QQMD0"
