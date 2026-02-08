@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SODIUM • Modern Tech Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-dark: #050505;
+  --purple: #a855f7;
+  --blue: #6366f1;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255,255,255,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background: var(--bg-dark); color:#fff; overflow-x:hidden;}
+
+/* Animated Background Blobs */
+.blob {position:fixed; border-radius:50%; filter: blur(80px); z-index:-1;}
+.blob1{width:500px;height:500px; background:radial-gradient(circle,#a855f780,transparent); top:10%; left:10%; animation:move1 25s infinite alternate;}
+.blob2{width:600px;height:600px; background:radial-gradient(circle,#6366f180,transparent); bottom:0; right:5%; animation:move2 30s infinite alternate;}
+@keyframes move1{0%{transform:translate(0,0);}100%{transform:translate(50px,60px);}}
+@keyframes move2{0%{transform:translate(0,0);}100%{transform:translate(-70px,-40px);}}
+
+/* Header */
+header{position:fixed; top:0;width:100%; z-index:1000; display:flex; justify-content:space-between; align-items:center; padding:15px 60px; background: rgba(0,0,0,0.4); backdrop-filter: blur(12px); border-bottom:1px solid rgba(255,255,255,0.1);}
+.logo span{font-weight:700; color:var(--purple); letter-spacing:4px;}
+nav a{margin-left:30px; text-decoration:none;color:#fff;position:relative;}
+nav a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:2px;background:var(--blue);transition:0.3s;}
+nav a:hover::after{width:100%;}
+
+/* Hero */
+.hero{position:relative; padding-top:150px; text-align:left; max-width:900px; margin:0 auto;}
+.hero h1{font-size:56px; line-height:1.2; margin-bottom:20px; animation:slideIn 1.2s ease forwards;}
+.hero span{color:var(--purple);}
+.hero p{max-width:600px;margin-bottom:30px;color:#ccc; animation:fadeIn 2s ease forwards;}
+.hero-logo{position:absolute; right:80px; top:50%; transform:translateY(-50%); width:200px; animation:float 4s ease-in-out infinite; filter:drop-shadow(0 0 40px var(--blue));}
+
+/* CTA Button */
+.cta-btn{display:inline-block;padding:12px 30px;border-radius:30px;background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;font-weight:600;font-size:14px;text-decoration:none;position:relative; overflow:hidden; box-shadow:0 0 20px var(--purple); animation:glowPulse 2.5s infinite; transition: transform 0.25s, box-shadow 0.25s;}
+.cta-btn:hover{transform:translateY(-3px) scale(1.05); box-shadow:0 0 40px var(--blue),0 0 60px var(--purple);}
+.cta-btn::before{content:'';position:absolute;top:0;left:-120%;width:120%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent); animation:shine 3s infinite;}
+
+/* Sections */
+section{padding:100px 60px; max-width:1200px; margin:0 auto;}
+section h2{font-size:36px; margin-bottom:30px; color:var(--purple);}
+.card-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:25px;}
+.card{background:var(--glass); backdrop-filter:blur(15px); border:1px solid var(--glass-border); border-radius:24px; padding:25px; transition:transform 0.3s, box-shadow 0.3s;}
+.card:hover{transform:translateY(-10px); box-shadow:0 0 35px var(--purple),0 0 60px var(--blue);}
+.card h3{margin-bottom:15px; color:#fff;}
+.card p{color:#ddd;}
+
+/* Animations */
+@keyframes slideIn{0%{opacity:0;transform:translateY(50px);}100%{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{0%{opacity:0;}100%{opacity:1;}}
+@keyframes float{0%,100%{transform:translateY(-50%) translateY(0);}50%{transform:translateY(-50%) translateY(-20px);}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 18px var(--purple),0 0 50px var(--blue);}50%{box-shadow:0 0 30px var(--purple),0 0 80px var(--blue);}}
+@keyframes shine{0%{left:-120%;}60%{left:120%;}100%{left:120%;}}
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+
+<header>
+  <div class="logo"><img src="logo.png" height="42"><span>SODIUM</span></div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#about">About Us</a>
+    <a href="#departments">Departments</a>
+    <a href="#events">Events & Competitions</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section id="home" class="hero">
+  <div class="eyebrow">SODIUM • Modern Tech Hub</div>
+  <h1>Building the <span>Future</span><br>Through Innovation</h1>
+  <p>We manage IT, Media, and Gaming departments while empowering members through competitions, content creation, and tech development.</p>
+  <a href="login.html" class="cta-btn">Become a part of our community</a>
+  <img src="logo.png" class="hero-logo" alt="Floating SODIUM logo">
+</section>
+
+<section id="about">
+  <h2>About Us</h2>
+  <div class="card-grid">
+    <div class="card"><h3>Vision & Mission</h3><p>Our vision is to empower creators and innovators across IT, media, and gaming sectors.</p></div>
+    <div class="card"><h3>Core Values</h3><p>Innovation, collaboration, integrity, and community-first mindset.</p></div>
+    <div class="card"><h3>Timeline / Achievements</h3><p>Our journey includes successful events, competitions, and tech products over the years.</p></div>
+  </div>
+</section>
+
+<section id="departments">
+  <h2>Departments</h2>
+  <div class="card-grid">
+    <div class="card"><h3>Media Department</h3><p>Creating content for YouTube, Facebook, Instagram, and more.</p></div>
+    <div class="card"><h3>IT Department</h3><p>Productive IT: Web, software, and apps for market.<br>Competitive IT: AI, Robotics, and programming competitions.</p></div>
+    <div class="card"><h3>Gaming Department</h3><p>Organizing tournaments, competitions, and community gaming events.</p></div>
+  </div>
+</section>
+
+<section id="events">
+  <h2>Events & Competitions</h2>
+  <div class="card-grid">
+    <div class="card"><h3>Upcoming</h3><p>See all scheduled events and competitions.</p></div>
+    <div class="card"><h3>Ongoing</h3><p>Active events you can join now.</p></div>
+    <div class="card"><h3>Past</h3><p>Highlights and results from previous events.</p></div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2>Contact SODIUM</h2>
+  <div class="card-grid">
+    <div class="card"><p>Email: <strong>contact@sodium.company</strong></p><p>Social Media Links</p><p>Support Form</p></div>
+  </div>
+</section>
+</body>
+</html>
