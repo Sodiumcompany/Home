@@ -145,10 +145,10 @@ button {
     <input type="email" id="login-email" placeholder="Email Address">
     <div class="password-wrapper">
       <input type="password" id="login-pass" placeholder="Password">
-      <span class="eye-icon" onclick="togglePassword('login-pass')">👁️</span>
+      <span class="eye-icon" id="login-eye">👁️</span>
     </div>
-    <button class="btn-primary" onclick="handleLogin()">Login</button>
-    <button class="switch-btn" onclick="toggleCard('signup')">Don't have an account? Sign Up</button>
+    <button class="btn-primary" id="login-btn">Login</button>
+    <button class="switch-btn" id="to-signup">Don't have an account? Sign Up</button>
   </div>
 
   <!-- Signup Card -->
@@ -158,10 +158,10 @@ button {
     <input type="email" id="signup-email" placeholder="Email Address">
     <div class="password-wrapper">
       <input type="password" id="signup-pass" placeholder="Password">
-      <span class="eye-icon" onclick="togglePassword('signup-pass')">👁️</span>
+      <span class="eye-icon" id="signup-eye">👁️</span>
     </div>
-    <button class="btn-primary" onclick="handleSignup()">Create Account</button>
-    <button class="switch-btn" onclick="toggleCard('login')">Already have an account? Login</button>
+    <button class="btn-primary" id="signup-btn">Create Account</button>
+    <button class="switch-btn" id="to-login">Already have an account? Login</button>
   </div>
 
   <!-- Role Request Card -->
@@ -172,7 +172,7 @@ button {
     <input type="text" id="req-region" placeholder="Region">
     <input type="text" id="req-phone" placeholder="Phone">
     <textarea id="req-desc" placeholder="Why do you want this role?"></textarea>
-    <button class="btn-primary" onclick="submitRequest()">Submit Request</button>
+    <button class="btn-primary" id="req-btn">Submit Request</button>
   </div>
 
 </div>
@@ -197,18 +197,26 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Toggle Login/Signup/Request
+// Toggle cards
 function toggleCard(card){
   document.getElementById('login-card').style.display = card==='login'?'block':'none';
   document.getElementById('signup-card').style.display = card==='signup'?'block':'none';
   document.getElementById('request-card').style.display = 'none';
 }
 
-// Toggle password visibility
-function togglePassword(id){
-  const input = document.getElementById(id);
+// Toggle password
+function togglePassword(inputId){
+  const input = document.getElementById(inputId);
   input.type = input.type === "password" ? "text" : "password";
 }
+
+// Event listeners for switch buttons
+document.getElementById('to-signup').addEventListener('click', ()=>toggleCard('signup'));
+document.getElementById('to-login').addEventListener('click', ()=>toggleCard('login'));
+
+// Event listeners for password eye
+document.getElementById('login-eye').addEventListener('click', ()=>togglePassword('login-pass'));
+document.getElementById('signup-eye').addEventListener('click', ()=>togglePassword('signup-pass'));
 
 // Show signup automatically if URL has ?signup=true
 window.addEventListener('load', () => {
@@ -218,15 +226,15 @@ window.addEventListener('load', () => {
   }
 });
 
-// Sign Up with email verification
-function handleSignup(){
+// Sign Up
+document.getElementById('signup-btn').addEventListener('click', async ()=>{
   const name = document.getElementById('signup-name').value;
   const email = document.getElementById('signup-email').value;
   const pass = document.getElementById('signup-pass').value;
   if(!name || !email || !pass){ alert('Fill all fields'); return; }
 
-  createUserWithEmailAndPassword(auth,email,pass)
-  .then(async (userCredential)=>{
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth,email,pass);
     await sendEmailVerification(userCredential.user);
     await setDoc(doc(db,"users",userCredential.user.uid),{
       name:name,
@@ -236,16 +244,18 @@ function handleSignup(){
     });
     alert('Verification email sent! You can login after verification.');
     toggleCard('login');
-  })
-  .catch(err=>alert(err.message));
-}
+  } catch(err){
+    alert(err.message);
+  }
+});
 
 // Login
-function handleLogin(){
+document.getElementById('login-btn').addEventListener('click', async ()=>{
   const email = document.getElementById('login-email').value;
   const pass = document.getElementById('login-pass').value;
-  signInWithEmailAndPassword(auth,email,pass)
-  .then(async userCredential=>{
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth,email,pass);
     const docSnap = await getDoc(doc(db,"users",userCredential.user.uid));
     const data = docSnap.data();
     if(!data){ alert("User info missing!"); return; }
@@ -265,12 +275,13 @@ function handleLogin(){
       document.getElementById('req-name').value = data.name;
       document.getElementById('req-email').value = data.email;
     }
-  })
-  .catch(err=>alert(err.message));
-}
+  } catch(err){
+    alert(err.message);
+  }
+});
 
 // Submit role request
-async function submitRequest(){
+document.getElementById('req-btn').addEventListener('click', async ()=>{
   const name = document.getElementById('req-name').value;
   const email = document.getElementById('req-email').value;
   const region = document.getElementById('req-region').value;
@@ -302,7 +313,7 @@ async function submitRequest(){
 
   alert("Request submitted! You will go to Member Dashboard while waiting.");
   window.location.href = "member.html";
-}
+});
 
 // Keep user logged in
 onAuthStateChanged(auth,user=>{
