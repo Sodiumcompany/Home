@@ -13,7 +13,7 @@
   --glass: rgba(255,255,255,0.05);
   --border: rgba(255,255,255,0.15);
 }
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
 body { background-color: var(--bg); color:white; min-height:100vh; overflow-x:hidden; }
 .blob { position:fixed; width:500px; height:500px; border-radius:50%; background: radial-gradient(circle, rgba(168,85,247,0.15), transparent 70%); filter: blur(80px); z-index:-1; animation: move 20s infinite alternate; }
 @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(20%,20%); } }
@@ -39,15 +39,13 @@ textarea { width:100%; padding:12px; margin-bottom:15px; border-radius:8px; bord
   <!-- Login Card -->
   <div id="login-card" class="glass-card">
     <h2>Login</h2>
-    <div class="password-wrapper">
-      <input type="email" id="login-email" placeholder="Email Address">
-    </div>
+    <input type="email" id="login-email" placeholder="Email Address">
     <div class="password-wrapper">
       <input type="password" id="login-pass" placeholder="Password">
       <span class="eye-icon" onclick="togglePassword('login-pass')">👁️</span>
     </div>
     <button class="btn-primary" onclick="handleLogin()">Login</button>
-    <span class="switch-btn" onclick="toggleCard('signup')">Don't have an account? Sign Up</span>
+    <span class="switch-btn" onclick="toggleCard('signup')">Don&apos;t have an account? Sign Up</span>
   </div>
 
   <!-- Signup Card -->
@@ -80,7 +78,7 @@ textarea { width:100%; padding:12px; margin-bottom:15px; border-radius:8px; bord
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUVsLH-YZdbhnH5U8tuS-31bTrPz6CZ8g",
@@ -137,13 +135,17 @@ function handleLogin(){
     const data = docSnap.data();
     if(!data){ alert("User info missing!"); return; }
 
-    // Show post-login options
+    // Auto Master Redirect
+    if(data.role === "master"){
+      window.location.href = "master-dashboard.html";
+      return;
+    }
+
+    // Post-login options
     const proceed = confirm("Click OK for Default Member, Cancel to Request Role");
     if(proceed){
-      // Default Member
       window.location.href = "member.html";
     }else{
-      // Request Role
       document.getElementById('request-card').style.display = 'block';
       document.getElementById('login-card').style.display = 'none';
       document.getElementById('signup-card').style.display = 'none';
