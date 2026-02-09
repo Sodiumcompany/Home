@@ -1,0 +1,24 @@
+<h2>Create Account</h2>
+
+<input id="name" placeholder="User Name">
+<input id="email" placeholder="Email">
+
+<button id="verifyBtn">Verify Email</button>
+
+<script type="module">
+import { auth } from './firebase.js';
+import { sendSignInLinkToEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const actionCodeSettings={
+url:"https://YOURUSERNAME.github.io/YOURREPO/set-password.html",
+handleCodeInApp:true
+};
+
+verifyBtn.onclick async=()=>{
+localStorage.setItem("newName",name.value);
+localStorage.setItem("emailForSignIn",email.value);
+
+await sendSignInLinkToEmail(auth,email.value,actionCodeSettings);
+alert("Verification email sent.");
+};
+</script>
