@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <!-- Add Firebase SDK -->
 <script type="module">
-  // Import Firebase modules
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { 
     getAuth, 
@@ -29,7 +28,6 @@
     getDocs
   } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   
-  // Your Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyAUVsLH-YZdbhnH5U8tuS-31bTrPz6CZ8g",
     authDomain: "sodium-b5392.firebaseapp.com",
@@ -40,12 +38,10 @@
     measurementId: "G-E0F44QQMD0"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   
-  // Make Firebase available globally
   window.firebaseAuth = { 
     app, auth, db, 
     createUserWithEmailAndPassword, 
@@ -63,6 +59,9 @@
   --blue: #6366f1;
   --glass: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255,255,255,0.15);
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 html{scroll-behavior:smooth;}
@@ -129,6 +128,16 @@ nav a:hover::after{width:100%;}
 .auth-header p {
   color: #ccc;
   font-size: 14px;
+}
+
+.admin-note {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #fbbf24;
 }
 
 .auth-tabs {
@@ -305,6 +314,13 @@ nav a:hover::after{width:100%;}
   display: block;
 }
 
+.message.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  display: block;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -350,6 +366,9 @@ nav a:hover::after{width:100%;}
     <div class="auth-header">
       <h2>Welcome to SODIUM</h2>
       <p>Join our tech community and access exclusive content</p>
+      <div class="admin-note">
+        <i class="fas fa-shield-alt"></i> Admin access: sodum@ceo.gmail.com
+      </div>
     </div>
     
     <div class="auth-tabs">
@@ -456,6 +475,15 @@ nav a:hover::after{width:100%;}
 </div>
 
 <script>
+// Special admin credentials
+const ADMIN_EMAIL = 'sodum@ceo.gmail.com';
+const ADMIN_PASSWORD = 'sodiumceo2026@#saif';
+
+// Check if user is admin
+function isAdminUser(email, password) {
+  return email === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+}
+
 // Wait for Firebase to load
 document.addEventListener('DOMContentLoaded', async () => {
   // Wait for Firebase to be available
@@ -484,6 +512,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.location.href = 'member.html';
     }
   });
+  
+  // Check if admin is already logged in
+  const adminUser = localStorage.getItem('sodium_admin_user');
+  if (adminUser) {
+    // Check if admin session is still valid (less than 24 hours old)
+    const adminData = JSON.parse(adminUser);
+    const lastLogin = new Date(adminData.lastLogin);
+    const now = new Date();
+    const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
+    
+    if (hoursDiff < 24) {
+      window.location.href = 'master-dashboard.html';
+    } else {
+      // Session expired
+      localStorage.removeItem('sodium_admin_user');
+    }
+  }
   
   // Tab Switching
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -697,8 +742,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Set loading state
     setLoading('loginSubmitBtn', true);
     
+    // Check for admin login
+    if (isAdminUser(email, password)) {
+      // Create admin session
+      const adminUser = {
+        uid: 'admin_' + Date.now(),
+        name: 'SODIUM CEO',
+        username: 'sodiumceo',
+        email: email,
+        phone: '+0000000000',
+        role: 'admin',
+        isMasterAdmin: true,
+        lastLogin: new Date().toISOString()
+      };
+      
+      // Store admin session
+      localStorage.setItem('sodium_admin_user', JSON.stringify(adminUser));
+      
+      // Show success message
+      showMessage('loginMessage', 'Admin login successful! Redirecting to Master Dashboard...', 'success');
+      
+      // Redirect to master dashboard
+      setTimeout(() => {
+        window.location.href = 'master-dashboard.html';
+      }, 1000);
+      
+      setLoading('loginSubmitBtn', false);
+      return;
+    }
+    
     try {
-      // Sign in with Firebase
+      // Normal user Firebase login
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
