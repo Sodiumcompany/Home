@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SODIUM • Member Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg-dark: #050505;
+  --purple: #a855f7;
+  --blue: #6366f1;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255,255,255,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background: var(--bg-dark); color:#fff; overflow-x:hidden;}
+
+/* Animated Background Blobs */
+.blob {position:fixed; border-radius:50%; filter: blur(80px); z-index:-1;}
+.blob1{width:500px;height:500px; background:radial-gradient(circle,#a855f780,transparent); top:10%; left:10%; animation:move1 25s infinite alternate;}
+.blob2{width:600px;height:600px; background:radial-gradient(circle,#6366f180,transparent); bottom:0; right:5%; animation:move2 30s infinite alternate;}
+@keyframes move1{0%{transform:translate(0,0);}100%{transform:translate(50px,60px);}}
+@keyframes move2{0%{transform:translate(0,0);}100%{transform:translate(-70px,-40px);}}
+
+/* Header */
+header{position:fixed; top:0;width:100%; z-index:1000; display:flex; justify-content:space-between; align-items:center; padding:15px 60px; background: rgba(0,0,0,0.4); backdrop-filter: blur(12px); border-bottom:1px solid rgba(255,255,255,0.1);}
+.logo{display: flex; align-items: center; gap: 10px;}
+.logo span{font-weight:700; color:var(--purple); letter-spacing:4px; font-size: 24px;}
+nav a{margin-left:30px; text-decoration:none;color:#fff;position:relative;}
+nav a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:2px;background:var(--blue);transition:0.3s;}
+nav a:hover::after{width:100%;}
+
+/* Member Dashboard */
+.dashboard {
+  padding: 150px 60px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 60px;
+  padding: 40px;
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+}
+
+.welcome-section h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-section p {
+  color: #ccc;
+  font-size: 18px;
+  max-width: 700px;
+  margin: 0 auto 30px;
+}
+
+.member-info {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.info-card {
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 16px;
+  min-width: 200px;
+  text-align: center;
+}
+
+.info-card .label {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 8px;
+}
+
+.info-card .value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.dashboard-card {
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 30px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+}
+
+.dashboard-card h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: var(--purple);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-card ul {
+  list-style: none;
+}
+
+.dashboard-card li {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-card li:last-child {
+  border-bottom: none;
+}
+
+.dashboard-card .badge {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dashboard-card .btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-top: 15px;
+  transition: all 0.3s;
+}
+
+.dashboard-card .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4);
+}
+
+/* Logout Button */
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 25px;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 20px;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-card {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.dashboard-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dashboard-card:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 130px 25px 40px;
+  }
+  
+  .welcome-section h1 {
+    font-size: 32px;
+  }
+  
+  .member-info {
+    gap: 15px;
+  }
+  
+  .info-card {
+    min-width: 150px;
+  }
+  
+  header {
+    padding: 15px 25px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+
+<header>
+  <div class="logo">
+    <span>SODIUM</span>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#events">Events</a>
+    <a href="#profile">Profile</a>
+  </nav>
+</header>
+
+<div class="dashboard" id="dashboard">
+  <div class="welcome-section">
+    <h1 id="welcomeName">Welcome to SODIUM</h1>
+    <p id="welcomeMessage">Access exclusive tech content, events, and community features</p>
+    
+    <div class="member-info" id="memberInfo">
+      <!-- Will be populated by JavaScript -->
+    </div>
+    
+    <button class="logout-btn" id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+  
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
+      <ul>
+        <li>Tech Conference 2024 <span class="badge">May 15</span></li>
+        <li>AI Workshop <span class="badge">May 22</span></li>
+        <li>Gaming Tournament <span class="badge">June 5</span></li>
+        <li>Web Dev Bootcamp <span class="badge">June 18</span></li>
+      </ul>
+      <a href="#events" class="btn">View All Events</a>
+    </div>
+    
+    <div class="dashboard-card">
+      <h3><i class="fas fa-trophy"></i> Your Achievements</h3>
+      <ul>
+        <li>SODIUM Member <span class="badge">Active</span></li>
+        <li>Event Participant <span class="badge">3 Events</span></li>
+        <li>Community Contributor <span class="badge">Level 2</span></li>
+        <li>Learning Progress <span class="badge">75%</span></li>
+      </ul>
+      <a href="#achievements" class="btn">View Details</a>
+    </div>
+    
+    <div class="dashboard-card">
+      <h3><i class="fas fa-users"></i> Quick Actions</h3>
+      <ul>
+        <li><a href="#profile" style="color: var(--blue); text-decoration: none;">Update Profile</a></li>
+        <li><a href="#events" style="color: var(--blue); text-decoration: none;">Register for Events</a></li>
+        <li><a href="#resources" style="color: var(--blue); text-decoration: none;">Access Resources</a></li>
+        <li><a href="#community" style="color: var(--blue); text-decoration: none;">Join Discussions</a></li>
+      </ul>
+      <a href="#community" class="btn">Go to Community</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// Check if user is logged in
+document.addEventListener('DOMContentLoaded', () => {
+  let user = null;
+  
+  // Try to get user from localStorage
+  try {
+    const storedUser = localStorage.getItem('sodium_current_user');
+    if (storedUser) {
+      user = JSON.parse(storedUser);
+    }
+  } catch (error) {
+    // Try sessionStorage as fallback
+    const sessionUser = sessionStorage.getItem('currentUser');
+    if (sessionUser) {
+      user = JSON.parse(sessionUser);
+    }
+  }
+  
+  // If no user found, redirect to login
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+  
+  // Display user information
+  document.getElementById('welcomeName').textContent = `Welcome, ${user.name}!`;
+  
+  // Format date
+  const joinDate = new Date(user.createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  
+  // Update member info
+  document.getElementById('memberInfo').innerHTML = `
+    <div class="info-card">
+      <div class="label">Username</div>
+      <div class="value">@${user.username}</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Email</div>
+      <div class="value">${user.email}</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Phone</div>
+      <div class="value">${user.phone}</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Member Since</div>
+      <div class="value">${joinDate}</div>
+    </div>
+  `;
+  
+  // Logout functionality
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    // Clear user data
+    localStorage.removeItem('sodium_current_user');
+    sessionStorage.removeItem('currentUser');
+    
+    // Redirect to login page
+    window.location.href = 'login.html';
+  });
+});
+</script>
+</body>
+</html>
