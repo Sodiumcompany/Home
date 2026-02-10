@@ -1,33 +1,1519 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SODIUM Glass - Secure Admin System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050505;
+  --purple:#a855f7;
+  --blue:#6366f1;
+  --pink:#ec4899;
+  --success:#10b981;
+  --error:#ef4444;
+  --warning:#f59e0b;
+  --admin:#8b5cf6;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif;}
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:var(--bg);
+  overflow-x:hidden;
+  padding:20px;
+}
+
+/* Animated blobs */
+.blob{position:fixed;border-radius:50%;filter:blur(120px);z-index:-1;opacity:0.6;}
+.blob1{width:min(500px, 80vw);height:min(500px, 80vw);background:radial-gradient(circle,var(--purple),transparent);top:10%;left:10%;animation:float1 15s infinite alternate ease-in-out;}
+.blob2{width:min(600px, 90vw);height:min(600px, 90vw);background:radial-gradient(circle,var(--blue),transparent);bottom:0;right:0;animation:float2 18s infinite alternate ease-in-out;}
+@keyframes float1{0%{transform:translate(0,0) scale(1);}100%{transform:translate(50px,60px) scale(1.1);}}
+@keyframes float2{0%{transform:translate(0,0) scale(1);}100%{transform:translate(-60px,-40px) scale(1.1);}}
+
+/* Container */
+.container{
+  width:min(1000px, 95vw);
+  min-height:600px;
+  max-height:90vh;
+  border-radius:24px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  display:flex;
+  position:relative;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:0 20px 40px rgba(0,0,0,0.3);
+}
+
+/* Responsive container for mobile */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    max-height:85vh;
+    min-height:auto;
+  }
+  
+  .card {
+    padding:30px 20px;
+    min-height:500px;
+  }
+  
+  .blob1, .blob2 {
+    display:none;
+  }
+}
+
+/* Glass Card Shared */
+.card{
+  flex:1 0 100%;
+  padding:40px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  transition:transform 0.6s ease, opacity 0.6s ease;
+  min-width:100%;
+}
+
+/* Form elements */
+form {
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* Logo */
+.logo-container {
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.logo {
+  height:70px;
+  filter:drop-shadow(0 0 20px var(--purple));
+  margin-bottom:15px;
+  transition:all 0.3s;
+}
+
+.logo:hover {
+  transform:scale(1.05);
+  filter:drop-shadow(0 0 30px var(--purple));
+}
+
+.brand-name {
+  font-size:2.2rem;
+  font-weight:700;
+  background:linear-gradient(135deg, var(--purple), var(--blue), var(--pink));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  letter-spacing:2px;
+  margin-bottom:5px;
+}
+
+.subtitle {
+  color:#aaa;
+  font-size:0.9rem;
+  letter-spacing:3px;
+  text-transform:uppercase;
+}
+
+.security-badge {
+  background:linear-gradient(135deg, var(--admin), var(--purple));
+  color:white;
+  padding:5px 15px;
+  border-radius:20px;
+  font-size:0.8rem;
+  margin-top:10px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-weight:600;
+}
+
+.security-badge::before {
+  content:'🔒';
+  font-size:0.9rem;
+}
+
+/* Titles */
+h2{
+  text-align:center;
+  margin-bottom:30px;
+  color:white;
+  font-size:2rem;
+}
+
+/* Inputs */
+.input-group{
+  margin-bottom:20px;
+  width:100%;
+  position:relative;
+}
+.input-group label{
+  display:block;
+  font-size:14px;
+  color:#ccc;
+  margin-bottom:5px;
+  font-weight:400;
+}
+.input-group input{
+  width:100%;
+  padding:12px 15px;
+  background:rgba(255,255,255,0.05);
+  border:none;
+  border-radius:8px;
+  border:2px solid rgba(255,255,255,.2);
+  color:white;
+  outline:none;
+  transition:.3s;
+  font-size:16px;
+}
+.input-group input:focus{
+  border-color:var(--purple);
+  box-shadow:0 0 0 3px rgba(168, 85, 247, 0.2);
+}
+.input-group input::placeholder{
+  color:rgba(255,255,255,0.5);
+}
+
+/* Password toggle */
+.password-toggle {
+  position:absolute;
+  right:15px;
+  top:35px;
+  background:none;
+  border:none;
+  color:#aaa;
+  cursor:pointer;
+  font-size:18px;
+}
+
+/* Error/Success messages */
+.error-message {
+  color:var(--error);
+  font-size:12px;
+  margin-top:5px;
+  display:none;
+}
+
+.success-message {
+  color:var(--success);
+  font-size:14px;
+  margin-top:10px;
+  text-align:center;
+  padding:10px;
+  background:rgba(16, 185, 129, 0.1);
+  border-radius:8px;
+  width:100%;
+  display:none;
+}
+
+.info-message {
+  color:var(--blue);
+  font-size:14px;
+  margin-top:10px;
+  text-align:center;
+  padding:10px;
+  background:rgba(99, 102, 241, 0.1);
+  border-radius:8px;
+  width:100%;
+  display:none;
+}
+
+.warning-message {
+  color:var(--warning);
+  font-size:14px;
+  margin-top:10px;
+  text-align:center;
+  padding:10px;
+  background:rgba(245, 158, 11, 0.1);
+  border-radius:8px;
+  width:100%;
+  display:none;
+}
+
+/* Buttons */
+.btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(135deg,var(--purple),var(--blue));
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+  margin-top:20px;
+  font-size:16px;
+  position:relative;
+  overflow:hidden;
+}
+.btn:hover{
+  transform:scale(1.03);
+  box-shadow:0 0 25px var(--purple);
+}
+.btn:active{
+  transform:scale(0.98);
+}
+.btn:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+}
+
+.btn-secondary {
+  background:rgba(255,255,255,0.1);
+  border:2px solid var(--purple);
+  margin-top:10px;
+}
+
+.btn-secondary:hover {
+  background:rgba(168, 85, 247, 0.1);
+}
+
+.btn-admin {
+  background:linear-gradient(135deg, var(--admin), var(--purple));
+  border:2px solid var(--admin);
+}
+
+.btn-admin:hover {
+  background:linear-gradient(135deg, var(--purple), var(--admin));
+  box-shadow:0 0 25px var(--admin);
+}
+
+/* Role Selector */
+.role-selector {
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+  width:100%;
+}
+
+.role-btn {
+  flex:1;
+  padding:12px;
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,255,255,0.2);
+  border-radius:8px;
+  color:#aaa;
+  cursor:pointer;
+  transition:all 0.3s;
+  text-align:center;
+  font-weight:500;
+}
+
+.role-btn.active {
+  background:rgba(168, 85, 247, 0.2);
+  border-color:var(--purple);
+  color:white;
+}
+
+.role-btn:hover:not(.active) {
+  border-color:var(--blue);
+  color:white;
+}
+
+/* Admin Panel */
+.admin-panel {
+  background:rgba(0,0,0,0.3);
+  border-radius:12px;
+  padding:20px;
+  margin-bottom:20px;
+  width:100%;
+  border:1px solid var(--admin);
+}
+
+.admin-header {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+  color:var(--admin);
+  font-weight:600;
+}
+
+.admin-header::before {
+  content:'👑';
+  font-size:1.2rem;
+}
+
+/* Overlay toggle */
+.toggle-text{
+  margin-top:25px;
+  font-size:15px;
+  color:#ccc;
+  text-align:center;
+}
+.toggle-text span{
+  color:var(--purple);
+  font-weight:600;
+  cursor:pointer;
+  transition:color 0.3s;
+}
+.toggle-text span:hover{
+  color:var(--blue);
+  text-decoration:underline;
+}
+
+/* Card animation states */
+.card-hidden {
+  display:none;
+}
+
+.card-active {
+  display:flex;
+  animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity:0;
+    transform:translateX(20px);
+  }
+  to {
+    opacity:1;
+    transform:translateX(0);
+  }
+}
+
+/* Dashboard */
+.dashboard {
+  width:100%;
+}
+
+.user-profile {
+  background:rgba(255,255,255,0.05);
+  border-radius:12px;
+  padding:25px;
+  margin-bottom:25px;
+  border-left:4px solid var(--purple);
+}
+
+.profile-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.profile-header h3 {
+  color:white;
+  font-size:1.5rem;
+}
+
+.user-role {
+  background:rgba(168, 85, 247, 0.2);
+  color:var(--purple);
+  padding:5px 15px;
+  border-radius:20px;
+  font-size:0.9rem;
+  font-weight:600;
+}
+
+.user-details-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.detail-item {
+  background:rgba(255,255,255,0.03);
+  padding:15px;
+  border-radius:8px;
+}
+
+.detail-item label {
+  color:#aaa;
+  font-size:12px;
+  display:block;
+  margin-bottom:5px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.detail-item .value {
+  color:white;
+  font-size:16px;
+  font-weight:500;
+  word-break:break-all;
+}
+
+/* Admin Dashboard */
+.admin-dashboard {
+  background:rgba(0,0,0,0.3);
+  border-radius:12px;
+  padding:25px;
+  margin-bottom:25px;
+  border:1px solid var(--admin);
+}
+
+.admin-stats {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.stat-card {
+  background:rgba(255,255,255,0.05);
+  padding:20px;
+  border-radius:8px;
+  text-align:center;
+  border-top:4px solid var(--admin);
+}
+
+.stat-card .number {
+  font-size:2rem;
+  font-weight:700;
+  color:white;
+  margin-bottom:5px;
+}
+
+.stat-card .label {
+  color:#aaa;
+  font-size:14px;
+}
+
+/* Users Table */
+.users-table-container {
+  overflow-x:auto;
+  border-radius:8px;
+  background:rgba(0,0,0,0.3);
+}
+
+.users-table {
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+}
+
+.users-table th {
+  background:rgba(139, 92, 246, 0.2);
+  color:white;
+  padding:15px;
+  text-align:left;
+  font-weight:600;
+  border-bottom:2px solid var(--admin);
+}
+
+.users-table td {
+  padding:12px 15px;
+  color:#ccc;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.users-table tr:hover {
+  background:rgba(255,255,255,0.03);
+}
+
+.users-table .user-id {
+  color:var(--purple);
+  font-family:monospace;
+  font-size:12px;
+}
+
+.users-table .user-email {
+  position:relative;
+}
+
+.users-table .masked {
+  color:#666;
+  font-style:italic;
+}
+
+.users-table .reveal-btn {
+  background:none;
+  border:none;
+  color:var(--admin);
+  cursor:pointer;
+  font-size:12px;
+  margin-left:5px;
+  padding:2px 8px;
+  border-radius:4px;
+  border:1px solid var(--admin);
+}
+
+.users-table .reveal-btn:hover {
+  background:rgba(139, 92, 246, 0.1);
+}
+
+/* Logout Button */
+.logout-btn {
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:rgba(255,255,255,0.1);
+  border:2px solid var(--error);
+  color:var(--error);
+  padding:10px 20px;
+  border-radius:25px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:all 0.3s;
+  font-weight:600;
+}
+
+.logout-btn:hover {
+  background:rgba(239, 68, 68, 0.1);
+  transform:scale(1.05);
+}
+
+/* Master ID Setup */
+.master-setup {
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(10px);
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+  padding:20px;
+}
+
+.master-modal {
+  background:var(--bg);
+  border-radius:20px;
+  padding:30px;
+  max-width:500px;
+  width:100%;
+  border:2px solid var(--admin);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+.master-modal h3 {
+  color:var(--admin);
+  margin-bottom:20px;
+  text-align:center;
+  font-size:1.5rem;
+}
+
+.master-modal p {
+  color:#aaa;
+  margin-bottom:20px;
+  text-align:center;
+  line-height:1.5;
+}
+
+.master-secret {
+  background:rgba(0,0,0,0.5);
+  padding:15px;
+  border-radius:8px;
+  font-family:monospace;
+  color:var(--success);
+  text-align:center;
+  margin:20px 0;
+  border:1px solid var(--success);
+  word-break:break-all;
+}
+</style>
 </head>
 <body>
 
-<h2>Login</h2>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
 
-<input id="email" placeholder="Email">
-<input id="pass" type="password" placeholder="Password">
+<div class="container" id="authContainer">
 
-<button id="loginBtn">Login</button>
+  <!-- MAIN AUTH CARD -->
+  <div class="card card-active" id="mainCard">
+    <div class="logo-container">
+      <img src="logo.png" alt="SODIUM" class="logo">
+      <div class="brand-name">SODIUM GLASS</div>
+      <div class="subtitle">Secure Enterprise System</div>
+      <div class="security-badge">Role-Based Access Control</div>
+    </div>
+    
+    <h2>Secure Access</h2>
+    
+    <!-- Role Selector -->
+    <div class="role-selector">
+      <button class="role-btn active" id="roleUser" onclick="switchRole('user')">👤 User Login</button>
+      <button class="role-btn" id="roleAdmin" onclick="switchRole('admin')">👑 Master Admin</button>
+    </div>
+    
+    <!-- User Login Form -->
+    <form id="userLoginForm" style="display:block;">
+      <div class="input-group">
+        <label for="userIdentifier">Email or Username</label>
+        <input type="text" id="userIdentifier" required placeholder="Enter your email or username">
+        <div class="error-message" id="userIdentifierError"></div>
+      </div>
+      <div class="input-group">
+        <label for="userPassword">Password</label>
+        <input type="password" id="userPassword" required placeholder="Enter your password">
+        <button type="button" class="password-toggle" onclick="togglePassword('userPassword')">👁️</button>
+        <div class="error-message" id="userPasswordError"></div>
+      </div>
+      <button type="submit" class="btn">User Login</button>
+      <div class="toggle-text">
+        Don't have an account? <span id="switchToSignup">Sign Up</span>
+      </div>
+    </form>
+    
+    <!-- Admin Login Form -->
+    <form id="adminLoginForm" style="display:none;">
+      <div class="admin-panel">
+        <div class="admin-header">Master Admin Access</div>
+        <p style="color:#aaa; font-size:14px; margin-bottom:15px;">
+          Requires master admin credentials. Regular users cannot access this panel.
+        </p>
+      </div>
+      
+      <div class="input-group">
+        <label for="adminId">Master Admin ID</label>
+        <input type="text" id="adminId" required placeholder="Enter master admin ID">
+        <div class="error-message" id="adminIdError"></div>
+      </div>
+      <div class="input-group">
+        <label for="adminPassword">Master Password</label>
+        <input type="password" id="adminPassword" required placeholder="Enter master password">
+        <button type="button" class="password-toggle" onclick="togglePassword('adminPassword')">👁️</button>
+        <div class="error-message" id="adminPasswordError"></div>
+      </div>
+      <button type="submit" class="btn btn-admin">Master Admin Login</button>
+    </form>
+    
+    <div class="success-message" id="mainSuccess"></div>
+    <div class="warning-message" id="mainWarning"></div>
+  </div>
 
-<p>
-Don't have account?
-<a href="verify.html">Sign Up</a>
-</p>
+  <!-- SIGN-UP CARD -->
+  <div class="card card-hidden" id="signupCard">
+    <div class="logo-container">
+      <img src="logo.png" alt="SODIUM" class="logo">
+      <div class="brand-name">SODIUM GLASS</div>
+      <div class="subtitle">User Registration</div>
+    </div>
+    
+    <h2>Create Account</h2>
+    <form id="signupForm">
+      <div class="input-group">
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" required placeholder="Enter your first name">
+        <div class="error-message" id="firstNameError"></div>
+      </div>
+      <div class="input-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" required placeholder="Enter your last name">
+        <div class="error-message" id="lastNameError"></div>
+      </div>
+      <div class="input-group">
+        <label for="signupEmail">Email</label>
+        <input type="email" id="signupEmail" required placeholder="Enter your email">
+        <div class="error-message" id="signupEmailError"></div>
+      </div>
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" required placeholder="Choose a username">
+        <div class="error-message" id="usernameError"></div>
+      </div>
+      <div class="input-group">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" placeholder="Optional phone number">
+        <div class="error-message" id="phoneError"></div>
+      </div>
+      <div class="input-group">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" required placeholder="Create a password (min 8 chars)">
+        <button type="button" class="password-toggle" onclick="togglePassword('signupPassword')">👁️</button>
+        <div class="error-message" id="signupPasswordError"></div>
+      </div>
+      <div class="input-group">
+        <label for="confirmPassword">Re-enter Password</label>
+        <input type="password" id="confirmPassword" required placeholder="Confirm your password">
+        <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</button>
+        <div class="error-message" id="confirmPasswordError"></div>
+      </div>
+      <button type="submit" class="btn">Register Account</button>
+      <div class="success-message" id="signupSuccess"></div>
+      <div class="toggle-text">Already have an account? <span id="switchToLogin">Login</span></div>
+    </form>
+  </div>
 
-<script type="module">
-import { auth } from './firebase.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  <!-- USER DASHBOARD -->
+  <div class="card card-hidden" id="userDashboard">
+    <div class="logo-container">
+      <img src="logo.png" alt="SODIUM" class="logo">
+      <div class="brand-name">SODIUM GLASS</div>
+      <div class="subtitle">User Dashboard</div>
+    </div>
+    
+    <div class="dashboard">
+      <div class="user-profile">
+        <div class="profile-header">
+          <h3 id="userWelcome">Welcome, User</h3>
+          <div class="user-role">👤 Regular User</div>
+        </div>
+        
+        <div class="user-details-grid">
+          <div class="detail-item">
+            <label>User ID</label>
+            <div class="value" id="dashboardUserId">Loading...</div>
+          </div>
+          <div class="detail-item">
+            <label>Full Name</label>
+            <div class="value" id="dashboardFullName">Loading...</div>
+          </div>
+          <div class="detail-item">
+            <label>Username</label>
+            <div class="value" id="dashboardUsername">Loading...</div>
+          </div>
+          <div class="detail-item">
+            <label>Email</label>
+            <div class="value" id="dashboardEmail">Loading...</div>
+          </div>
+          <div class="detail-item">
+            <label>Phone</label>
+            <div class="value" id="dashboardPhone">Loading...</div>
+          </div>
+          <div class="detail-item">
+            <label>Account Created</label>
+            <div class="value" id="dashboardCreated">Loading...</div>
+          </div>
+        </div>
+        
+        <div class="warning-message">
+          🔒 <strong>Security Notice:</strong> As a regular user, you can only view your own information. 
+          Other users' data is hidden from you.
+        </div>
+      </div>
+    </div>
+  </div>
 
-loginBtn.onclick = async ()=>{
-try{
-await signInWithEmailAndPassword(auth,email.value,pass.value);
-window.location="role.html";
-}catch(e){alert(e.message);}
-};
+  <!-- ADMIN DASHBOARD -->
+  <div class="card card-hidden" id="adminDashboard">
+    <div class="logo-container">
+      <img src="logo.png" alt="SODIUM" class="logo">
+      <div class="brand-name">SODIUM GLASS</div>
+      <div class="subtitle">👑 Master Admin Dashboard</div>
+      <div class="security-badge">Full System Access</div>
+    </div>
+    
+    <div class="dashboard">
+      <div class="admin-dashboard">
+        <div class="admin-stats">
+          <div class="stat-card">
+            <div class="number" id="totalUsers">0</div>
+            <div class="label">Total Users</div>
+          </div>
+          <div class="stat-card">
+            <div class="number" id="todayRegistrations">0</div>
+            <div class="label">Today's Registrations</div>
+          </div>
+          <div class="stat-card">
+            <div class="number" id="activeNow">1</div>
+            <div class="label">Active Now (You)</div>
+          </div>
+          <div class="stat-card">
+            <div class="number">🔐</div>
+            <div class="label">Master Admin</div>
+          </div>
+        </div>
+        
+        <h3 style="color:white; margin-bottom:15px;">All Registered Users</h3>
+        <div class="warning-message">
+          ⚠️ <strong>Master Admin View:</strong> You can see all user data. Passwords are masked for security.
+        </div>
+        
+        <div class="users-table-container">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Phone</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <!-- Users will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Master ID Setup Modal -->
+<div class="master-setup" id="masterSetupModal">
+  <div class="master-modal">
+    <h3>🔐 Master Admin Setup Required</h3>
+    <p>This is your first time using the system. Please save this Master Admin ID and Password securely:</p>
+    
+    <div class="master-secret" id="masterIdDisplay">
+      MASTER_ID: loading...
+    </div>
+    
+    <div class="master-secret" id="masterPasswordDisplay">
+      MASTER_PASSWORD: loading...
+    </div>
+    
+    <p style="color:var(--warning); font-size:12px;">
+      ⚠️ <strong>IMPORTANT:</strong> Save these credentials securely. You will need them to access the admin panel.
+      This will only be shown once.
+    </p>
+    
+    <button class="btn btn-admin" onclick="confirmMasterSetup()" style="margin-top:20px;">
+      I Have Saved These Credentials
+    </button>
+  </div>
+</div>
+
+<!-- Logout Button (hidden by default) -->
+<button class="logout-btn" id="logoutBtn" style="display:none;" onclick="logout()">
+  <span>🚪</span> Logout
+</button>
+
+<script>
+// Secure Database Manager with Master Admin System
+class SecureDatabase {
+  constructor() {
+    this.storageKey = 'sodium_secure_users';
+    this.masterKey = 'sodium_master_admin';
+    this.currentUserKey = 'sodium_current_session';
+    this.masterId = null;
+    this.masterPassword = null;
+    this.users = [];
+    this.currentUser = null;
+    this.isMasterAdmin = false;
+    
+    this.init();
+  }
+
+  // Initialize database
+  init() {
+    // Load users
+    const usersJson = localStorage.getItem(this.storageKey);
+    this.users = usersJson ? JSON.parse(usersJson) : [];
+    
+    // Load master credentials
+    const masterJson = localStorage.getItem(this.masterKey);
+    if (masterJson) {
+      const master = JSON.parse(masterJson);
+      this.masterId = master.id;
+      this.masterPassword = master.password;
+    } else {
+      // Generate new master credentials
+      this.generateMasterCredentials();
+    }
+    
+    // Load current session
+    const sessionJson = localStorage.getItem(this.currentUserKey);
+    if (sessionJson) {
+      this.currentUser = JSON.parse(sessionJson);
+      this.isMasterAdmin = this.currentUser.role === 'master';
+    }
+  }
+
+  // Generate secure master credentials
+  generateMasterCredentials() {
+    const timestamp = Date.now();
+    const randomStr = Math.random().toString(36).substring(2, 15);
+    
+    this.masterId = `MASTER_${timestamp.toString(36).toUpperCase()}`;
+    this.masterPassword = `MP_${randomStr.toUpperCase()}_${timestamp.toString(36).substring(0, 6)}`;
+    
+    // Store master credentials
+    localStorage.setItem(this.masterKey, JSON.stringify({
+      id: this.masterId,
+      password: this.masterPassword
+    }));
+    
+    // Show setup modal
+    document.getElementById('masterSetupModal').style.display = 'flex';
+    document.getElementById('masterIdDisplay').textContent = `MASTER_ID: ${this.masterId}`;
+    document.getElementById('masterPasswordDisplay').textContent = `MASTER_PASSWORD: ${this.masterPassword}`;
+  }
+
+  // Confirm master setup
+  confirmMasterSetup() {
+    document.getElementById('masterSetupModal').style.display = 'none';
+    alert('✅ Master admin credentials saved successfully!\n\nYou can now login as master admin using these credentials.');
+  }
+
+  // Save users to storage
+  saveUsers() {
+    localStorage.setItem(this.storageKey, JSON.stringify(this.users));
+  }
+
+  // Add new user
+  addUser(userData) {
+    // Check if user already exists
+    const existingUser = this.users.find(user => 
+      user.email === userData.email || user.username === userData.username
+    );
+
+    if (existingUser) {
+      return {
+        success: false,
+        message: existingUser.email === userData.email 
+          ? 'Email already registered' 
+          : 'Username already taken'
+      };
+    }
+
+    // Create secure user object
+    const newUser = {
+      id: 'USER_' + Date.now().toString(36).toUpperCase(),
+      ...userData,
+      role: 'user',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      lastLogin: null
+    };
+
+    this.users.push(newUser);
+    this.saveUsers();
+    
+    return {
+      success: true,
+      message: 'Registration successful',
+      user: newUser
+    };
+  }
+
+  // Validate user login
+  validateUserLogin(identifier, password) {
+    const user = this.users.find(user => 
+      (user.email === identifier || user.username === identifier) && 
+      user.role === 'user'
+    );
+
+    if (!user) {
+      return { success: false, message: 'User not found' };
+    }
+
+    if (user.password !== password) {
+      return { success: false, message: 'Invalid password' };
+    }
+
+    // Update last login
+    user.lastLogin = new Date().toISOString();
+    this.saveUsers();
+
+    // Set current session
+    this.currentUser = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      username: user.username,
+      phone: user.phone,
+      role: 'user',
+      createdAt: user.createdAt,
+      lastLogin: user.lastLogin
+    };
+    
+    localStorage.setItem(this.currentUserKey, JSON.stringify(this.currentUser));
+
+    return {
+      success: true,
+      message: 'Login successful',
+      user: this.currentUser
+    };
+  }
+
+  // Validate master admin login
+  validateMasterLogin(id, password) {
+    if (id === this.masterId && password === this.masterPassword) {
+      // Set current session as master admin
+      this.currentUser = {
+        id: this.masterId,
+        firstName: 'Master',
+        lastName: 'Admin',
+        email: 'admin@sodiumglass.com',
+        username: 'master_admin',
+        role: 'master',
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString()
+      };
+      
+      this.isMasterAdmin = true;
+      localStorage.setItem(this.currentUserKey, JSON.stringify(this.currentUser));
+
+      return {
+        success: true,
+        message: 'Master admin login successful',
+        user: this.currentUser
+      };
+    }
+
+    return { success: false, message: 'Invalid master credentials' };
+  }
+
+  // Get user by ID (for user dashboard)
+  getUserById(userId) {
+    return this.users.find(user => user.id === userId);
+  }
+
+  // Get all users (for admin dashboard - with masked passwords)
+  getAllUsersForAdmin() {
+    return this.users.map(user => ({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      username: user.username,
+      phone: user.phone,
+      password: this.maskPassword(user.password),
+      rawPassword: user.password, // Keep for reveal functionality
+      role: user.role,
+      createdAt: user.createdAt,
+      lastLogin: user.lastLogin
+    }));
+  }
+
+  // Mask password for display
+  maskPassword(password) {
+    return '•'.repeat(Math.min(password.length, 12));
+  }
+
+  // Get dashboard statistics
+  getDashboardStats() {
+    const today = new Date().toISOString().split('T')[0];
+    const todayRegistrations = this.users.filter(user => 
+      user.createdAt.split('T')[0] === today
+    ).length;
+
+    return {
+      totalUsers: this.users.length,
+      todayRegistrations,
+      activeNow: 1 // Current admin user
+    };
+  }
+
+  // Logout
+  logout() {
+    this.currentUser = null;
+    this.isMasterAdmin = false;
+    localStorage.removeItem(this.currentUserKey);
+  }
+}
+
+// Initialize Secure Database
+const secureDB = new SecureDatabase();
+
+// DOM Elements
+const mainCard = document.getElementById('mainCard');
+const signupCard = document.getElementById('signupCard');
+const userDashboard = document.getElementById('userDashboard');
+const adminDashboard = document.getElementById('adminDashboard');
+const logoutBtn = document.getElementById('logoutBtn');
+
+// Check if user is already logged in
+if (secureDB.currentUser) {
+  if (secureDB.isMasterAdmin) {
+    showAdminDashboard();
+  } else {
+    showUserDashboard(secureDB.currentUser);
+  }
+}
+
+// Switch between user and admin login
+function switchRole(role) {
+  const userBtn = document.getElementById('roleUser');
+  const adminBtn = document.getElementById('roleAdmin');
+  const userForm = document.getElementById('userLoginForm');
+  const adminForm = document.getElementById('adminLoginForm');
+
+  if (role === 'user') {
+    userBtn.classList.add('active');
+    adminBtn.classList.remove('active');
+    userForm.style.display = 'block';
+    adminForm.style.display = 'none';
+  } else {
+    userBtn.classList.remove('active');
+    adminBtn.classList.add('active');
+    userForm.style.display = 'none';
+    adminForm.style.display = 'block';
+  }
+}
+
+// Toggle password visibility
+function togglePassword(inputId) {
+  const input = document.getElementById(inputId);
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+// Show/Hide messages
+function showMessage(elementId, message, type = 'success') {
+  const element = document.getElementById(elementId);
+  element.textContent = message;
+  element.style.display = 'block';
+  
+  // Set appropriate class
+  element.className = type + '-message';
+  
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    element.style.display = 'none';
+  }, 5000);
+}
+
+function hideMessage(elementId) {
+  const element = document.getElementById(elementId);
+  element.style.display = 'none';
+}
+
+// Switch cards
+function switchCard(cardName) {
+  // Hide all cards
+  [mainCard, signupCard, userDashboard, adminDashboard].forEach(card => {
+    card.classList.remove('card-active');
+    card.classList.add('card-hidden');
+  });
+  
+  // Show logout button for dashboards
+  logoutBtn.style.display = cardName.includes('Dashboard') ? 'flex' : 'none';
+  
+  // Show selected card
+  let targetCard;
+  switch(cardName) {
+    case 'main':
+      targetCard = mainCard;
+      break;
+    case 'signup':
+      targetCard = signupCard;
+      break;
+    case 'userDashboard':
+      targetCard = userDashboard;
+      break;
+    case 'adminDashboard':
+      targetCard = adminDashboard;
+      break;
+  }
+  
+  if (targetCard) {
+    targetCard.classList.remove('card-hidden');
+    targetCard.classList.add('card-active');
+  }
+}
+
+// Reset form
+function resetForm(formId) {
+  const form = document.getElementById(formId);
+  if (form) {
+    form.reset();
+    const errors = form.querySelectorAll('.error-message');
+    errors.forEach(error => error.style.display = 'none');
+  }
+}
+
+// Form validation helpers
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+// Handle user login
+document.getElementById('userLoginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const identifier = document.getElementById('userIdentifier').value.trim();
+  const password = document.getElementById('userPassword').value;
+  
+  // Clear previous messages
+  hideMessage('userIdentifierError');
+  hideMessage('userPasswordError');
+  hideMessage('mainSuccess');
+  hideMessage('mainWarning');
+  
+  let isValid = true;
+  
+  // Validate identifier
+  if (!identifier) {
+    showMessage('userIdentifierError', 'Please enter email or username', 'error');
+    isValid = false;
+  }
+  
+  // Validate password
+  if (!password) {
+    showMessage('userPasswordError', 'Please enter password', 'error');
+    isValid = false;
+  }
+  
+  if (isValid) {
+    const result = secureDB.validateUserLogin(identifier, password);
+    
+    if (result.success) {
+      showUserDashboard(result.user);
+    } else {
+      showMessage('userIdentifierError', result.message, 'error');
+    }
+  }
+});
+
+// Handle admin login
+document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const adminId = document.getElementById('adminId').value.trim();
+  const adminPassword = document.getElementById('adminPassword').value;
+  
+  // Clear previous messages
+  hideMessage('adminIdError');
+  hideMessage('adminPasswordError');
+  hideMessage('mainSuccess');
+  hideMessage('mainWarning');
+  
+  let isValid = true;
+  
+  // Validate admin ID
+  if (!adminId) {
+    showMessage('adminIdError', 'Please enter master admin ID', 'error');
+    isValid = false;
+  }
+  
+  // Validate admin password
+  if (!adminPassword) {
+    showMessage('adminPasswordError', 'Please enter master password', 'error');
+    isValid = false;
+  }
+  
+  if (isValid) {
+    const result = secureDB.validateMasterLogin(adminId, adminPassword);
+    
+    if (result.success) {
+      showAdminDashboard();
+    } else {
+      showMessage('adminIdError', result.message, 'error');
+    }
+  }
+});
+
+// Handle signup
+document.getElementById('signupForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const userData = {
+    firstName: document.getElementById('firstName').value.trim(),
+    lastName: document.getElementById('lastName').value.trim(),
+    email: document.getElementById('signupEmail').value.trim(),
+    username: document.getElementById('username').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    password: document.getElementById('signupPassword').value
+  };
+  
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  
+  // Clear previous messages
+  ['firstNameError', 'lastNameError', 'signupEmailError', 'usernameError', 
+   'phoneError', 'signupPasswordError', 'confirmPasswordError', 'signupSuccess'].forEach(hideMessage);
+  
+  let isValid = true;
+  
+  // Validate first name
+  if (!userData.firstName) {
+    showMessage('firstNameError', 'First name is required', 'error');
+    isValid = false;
+  }
+  
+  // Validate last name
+  if (!userData.lastName) {
+    showMessage('lastNameError', 'Last name is required', 'error');
+    isValid = false;
+  }
+  
+  // Validate email
+  if (!userData.email) {
+    showMessage('signupEmailError', 'Email is required', 'error');
+    isValid = false;
+  } else if (!validateEmail(userData.email)) {
+    showMessage('signupEmailError', 'Please enter a valid email address', 'error');
+    isValid = false;
+  }
+  
+  // Validate username
+  if (!userData.username) {
+    showMessage('usernameError', 'Username is required', 'error');
+    isValid = false;
+  } else if (userData.username.length < 3) {
+    showMessage('usernameError', 'Username must be at least 3 characters', 'error');
+    isValid = false;
+  }
+  
+  // Validate phone
+  if (userData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(userData.phone.replace(/[\s\-\(\)]/g, ''))) {
+    showMessage('phoneError', 'Please enter a valid phone number', 'error');
+    isValid = false;
+  }
+  
+  // Validate password
+  if (!userData.password) {
+    showMessage('signupPasswordError', 'Password is required', 'error');
+    isValid = false;
+  } else if (userData.password.length < 8) {
+    showMessage('signupPasswordError', 'Password must be at least 8 characters', 'error');
+    isValid = false;
+  }
+  
+  // Validate password confirmation
+  if (!confirmPassword) {
+    showMessage('confirmPasswordError', 'Please confirm your password', 'error');
+    isValid = false;
+  } else if (userData.password !== confirmPassword) {
+    showMessage('confirmPasswordError', 'Passwords do not match', 'error');
+    isValid = false;
+  }
+  
+  if (isValid) {
+    const result = secureDB.addUser(userData);
+    
+    if (result.success) {
+      showMessage('signupSuccess', 'Registration successful! Please login with your credentials.', 'success');
+      
+      // Auto-switch to login after 2 seconds
+      setTimeout(() => {
+        switchCard('main');
+        resetForm('signupForm');
+      }, 2000);
+    } else {
+      showMessage('signupEmailError', result.message, 'error');
+    }
+  }
+});
+
+// Show user dashboard
+function showUserDashboard(user) {
+  // Update dashboard with user data
+  document.getElementById('userWelcome').textContent = `Welcome, ${user.firstName}`;
+  document.getElementById('dashboardUserId').textContent = user.id;
+  document.getElementById('dashboardFullName').textContent = `${user.firstName} ${user.lastName}`;
+  document.getElementById('dashboardUsername').textContent = user.username;
+  document.getElementById('dashboardEmail').textContent = user.email;
+  document.getElementById('dashboardPhone').textContent = user.phone || 'Not provided';
+  document.getElementById('dashboardCreated').textContent = new Date(user.createdAt).toLocaleDateString();
+  
+  switchCard('userDashboard');
+}
+
+// Show admin dashboard
+function showAdminDashboard() {
+  // Update statistics
+  const stats = secureDB.getDashboardStats();
+  document.getElementById('totalUsers').textContent = stats.totalUsers;
+  document.getElementById('todayRegistrations').textContent = stats.todayRegistrations;
+  document.getElementById('activeNow').textContent = stats.activeNow;
+  
+  // Load users table
+  const users = secureDB.getAllUsersForAdmin();
+  const tableBody = document.getElementById('usersTableBody');
+  tableBody.innerHTML = '';
+  
+  if (users.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center; padding:30px; color:#666;">
+          No users registered yet
+        </td>
+      </tr>
+    `;
+  } else {
+    users.forEach(user => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="user-id">${user.id}</td>
+        <td>${user.firstName} ${user.lastName}</td>
+        <td>${user.username}</td>
+        <td class="user-email">
+          <span class="masked">${maskEmail(user.email)}</span>
+          <button class="reveal-btn" onclick="revealEmail(this, '${user.email}')">Reveal</button>
+        </td>
+        <td class="user-email">
+          <span class="masked">${user.password}</span>
+          <button class="reveal-btn" onclick="revealPassword(this, '${user.rawPassword}')">Reveal</button>
+        </td>
+        <td>${user.phone || '-'}</td>
+        <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+  
+  switchCard('adminDashboard');
+}
+
+// Mask email for display
+function maskEmail(email) {
+  const [local, domain] = email.split('@');
+  const maskedLocal = local.substring(0, 2) + '•••' + local.substring(local.length - 1);
+  return `${maskedLocal}@${domain}`;
+}
+
+// Reveal email (admin only)
+function revealEmail(button, email) {
+  const span = button.previousElementSibling;
+  if (span.classList.contains('masked')) {
+    span.textContent = email;
+    span.classList.remove('masked');
+    button.textContent = 'Hide';
+  } else {
+    span.textContent = maskEmail(email);
+    span.classList.add('masked');
+    button.textContent = 'Reveal';
+  }
+}
+
+// Reveal password (admin only)
+function revealPassword(button, password) {
+  const span = button.previousElementSibling;
+  if (span.classList.contains('masked')) {
+    span.textContent = password;
+    span.classList.remove('masked');
+    button.textContent = 'Hide';
+    
+    // Auto-hide after 10 seconds
+    setTimeout(() => {
+      if (!span.classList.contains('masked')) {
+        span.textContent = '•'.repeat(Math.min(password.length, 12));
+        span.classList.add('masked');
+        button.textContent = 'Reveal';
+      }
+    }, 10000);
+  } else {
+    span.textContent = '•'.repeat(Math.min(password.length, 12));
+    span.classList.add('masked');
+    button.textContent = 'Reveal';
+  }
+}
+
+// Logout function
+function logout() {
+  secureDB.logout();
+  logoutBtn.style.display = 'none';
+  switchCard('main');
+  resetForm('userLoginForm');
+  resetForm('adminLoginForm');
+}
+
+// Event listeners for switching cards
+document.getElementById('switchToSignup').addEventListener('click', () => switchCard('signup'));
+document.getElementById('switchToLogin').addEventListener('click', () => switchCard('main'));
+
+// Initialize with user role selected
+switchRole('user');
 </script>
-
 </body>
 </html>
