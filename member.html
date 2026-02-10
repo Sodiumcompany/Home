@@ -19,6 +19,23 @@
     doc, 
     getDoc 
   } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // In member.html, add this check
+onAuthStateChanged(auth, async (user) => {
+  // Check if admin is trying to access member page
+  const adminUser = localStorage.getItem('sodium_admin_user');
+  if (adminUser) {
+    window.location.href = 'master-dashboard.html';
+    return;
+  }
+  
+  // Rest of the existing code...
+  if (user) {
+    // ... existing member page logic
+  } else {
+    window.location.href = 'login.html';
+  }
+});
   
   const firebaseConfig = {
     apiKey: "AIzaSyAUVsLH-YZdbhnH5U8tuS-31bTrPz6CZ8g",
