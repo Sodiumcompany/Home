@@ -165,6 +165,30 @@ nav a:hover::after{width:100%;}
   box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4);
 }
 
+.admin-actions {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.admin-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #aaa;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
 /* Logout Button */
 .logout-btn {
   display: inline-flex;
@@ -256,6 +280,12 @@ nav a:hover::after{width:100%;}
     <button class="logout-btn" id="logoutBtn">
       <i class="fas fa-sign-out-alt"></i> Logout
     </button>
+    
+    <div class="admin-actions">
+      <button class="admin-btn" id="adminExportBtn">
+        <i class="fas fa-download"></i> Export All User Data (Admin)
+      </button>
+    </div>
   </div>
   
   <div class="dashboard-grid">
@@ -306,21 +336,20 @@ document.addEventListener('DOMContentLoaded', () => {
       user = JSON.parse(storedUser);
     }
   } catch (error) {
-    // Try sessionStorage as fallback
-    const sessionUser = sessionStorage.getItem('currentUser');
-    if (sessionUser) {
-      user = JSON.parse(sessionUser);
-    }
+    // If no user found, redirect to login
+    window.location.href = 'login.html?auto=false';
+    return;
   }
   
   // If no user found, redirect to login
   if (!user) {
-    window.location.href = 'login.html';
+    window.location.href = 'login.html?auto=false';
     return;
   }
   
   // Display user information
   document.getElementById('welcomeName').textContent = `Welcome, ${user.name}!`;
+  document.getElementById('welcomeMessage').textContent = `You're now part of the SODIUM tech community. Access exclusive content, events, and resources.`;
   
   // Format date
   const joinDate = new Date(user.createdAt).toLocaleDateString('en-US', {
@@ -351,13 +380,89 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Logout functionality
   document.getElementById('logoutBtn').addEventListener('click', () => {
-    // Clear user data
+    // Clear current user data
     localStorage.removeItem('sodium_current_user');
-    sessionStorage.removeItem('currentUser');
     
     // Redirect to login page
     window.location.href = 'login.html';
   });
+  
+  // Admin export functionality
+  document.getElementById('adminExportBtn').addEventListener('click', () => {
+    // Check if user is admin (simple check)
+    if (user.role === 'admin') {
+      exportAllUserData();
+    } else {
+      // Prompt for admin password
+      const adminPass = prompt('Enter admin password to export all user data:');
+      
+      // Simple hardcoded password for demo (change this!)
+      if (adminPass === 'sodium2024') {
+        exportAllUserData();
+      } else {
+        alert('Incorrect password. Access denied.');
+      }
+    }
+  });
+  
+  // Function to export all user data
+  function exportAllUserData() {
+    try {
+      const usersJson = localStorage.getItem('sodium_users');
+      if (!usersJson) {
+        alert('No user data found.');
+        return;
+      }
+      
+      const users = JSON.parse(usersJson);
+      if (users.length === 0) {
+        alert('No user data to export.');
+        return;
+      }
+      
+      // Remove passwords from export for security
+      const usersForExport = users.map(u => {
+        const { password, ...userWithoutPassword } = u;
+        return userWithoutPassword;
+      });
+      
+      const dataStr = JSON.stringify(usersForExport, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = 'sodium_users_export_' + new Date().toISOString().split('T')[0] + '.json';
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      alert(`Exported ${users.length} user records.`);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Error exporting user data.');
+    }
+  }
+  
+  // Update user stats
+  updateUserStats();
+  
+  function updateUserStats() {
+    try {
+      const usersJson = localStorage.getItem('sodium_users');
+      if (usersJson) {
+        const users = JSON.parse(usersJson);
+        const totalUsers = users.length;
+        
+        // Update dashboard with stats if you have an element for it
+        const statsElement = document.querySelector('.dashboard-card:nth-child(2) li:last-child');
+        if (statsElement) {
+          // You could show community stats here
+        }
+      }
+    } catch (error) {
+      console.error('Error updating stats:', error);
+    }
+  }
 });
 </script>
 </body>
