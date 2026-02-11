@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SODIUM • Operations Head</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg-dark: #050505;
+  --primary: #3b82f6;
+  --secondary: #1d4ed8;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255,255,255,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background: var(--bg-dark); color:#fff; overflow-x:hidden;}
+.blob{position:fixed; border-radius:50%; filter: blur(80px); z-index:-1;}
+.blob1{width:500px;height:500px; background:radial-gradient(circle,#3b82f680,transparent); top:10%; left:10%; animation:move1 25s infinite alternate;}
+.blob2{width:600px;height:600px; background:radial-gradient(circle,#1d4ed880,transparent); bottom:0; right:5%; animation:move2 30s infinite alternate;}
+@keyframes move1{0%{transform:translate(0,0);}100%{transform:translate(50px,60px);}}
+@keyframes move2{0%{transform:translate(0,0);}100%{transform:translate(-70px,-40px);}}
+
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 60px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.logo-text {
+  font-weight: 700;
+  color: #fff;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.logo-text span {
+  color: var(--primary);
+}
+
+.role-badge {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+}
+
+.dashboard {
+  padding: 150px 60px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.welcome-banner {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 24px;
+  padding: 40px;
+  margin-bottom: 40px;
+}
+
+.welcome-banner h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-banner p {
+  color: #ccc;
+  font-size: 16px;
+  max-width: 600px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.dashboard-card {
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 30px;
+  transition: all 0.3s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.card-header h3 {
+  font-size: 20px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ops-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.metric-card {
+  background: rgba(255,255,255,0.03);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 130px 25px 40px;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">S</div>
+    <div class="logo-text">SOD<span>IUM</span><span class="role-badge"><i class="fas fa-cogs"></i> Operations Head</span></div>
+  </div>
+  
+  <div class="user-menu">
+    <a href="member.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Member Dashboard
+    </a>
+    <div class="user-avatar" id="userAvatar">OH</div>
+  </div>
+</header>
+
+<main class="dashboard">
+  <section class="welcome-banner">
+    <h1 id="welcomeTitle">Operations Head Dashboard</h1>
+    <p id="welcomeMessage">Monitor and manage daily operations, team performance, and resource allocation.</p>
+  </section>
+  
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3><i class="fas fa-chart-line"></i> Performance Metrics</h3>
+      </div>
+      <div class="ops-metrics">
+        <div class="metric-card">
+          <div class="metric-value">95%</div>
+          <div class="metric-label">Team Efficiency</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">87%</div>
+          <div class="metric-label">Task Completion</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">42</div>
+          <div class="metric-label">Active Projects</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">18</div>
+          <div class="metric-label">Pending Tasks</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3><i class="fas fa-tasks"></i> Recent Operations</h3>
+      </div>
+      <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <i class="fas fa-check-circle" style="color: #10b981;"></i>
+          <div style="flex: 1;">
+            <div style="font-size: 13px; color: #fff;">Resource Allocation Updated</div>
+            <div style="font-size: 12px; color: #aaa;">2 hours ago</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-sync-alt" style="color: #f59e0b;"></i>
+          <div style="flex: 1;">
+            <div style="font-size: 13px; color: #fff;">Team Schedule Revised</div>
+            <div style="font-size: 12px; color: #aaa;">1 day ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3><i class="fas fa-users"></i> Team Overview</h3>
+      </div>
+      <div class="ops-metrics">
+        <div class="metric-card">
+          <div class="metric-value">24</div>
+          <div class="metric-label">Team Members</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">6</div>
+          <div class="metric-label">Departments</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">3</div>
+          <div class="metric-label">Active Leads</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">92%</div>
+          <div class="metric-label">Retention</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Check if user has Operations Head role
+  const userData = JSON.parse(localStorage.getItem('sodium_user_data') || 'null');
+  const storedUsers = JSON.parse(localStorage.getItem('sodium_users') || '[]');
+  const currentUser = storedUsers.find(u => u.uid === (userData?.uid || localStorage.getItem('sodium_current_user') ? JSON.parse(localStorage.getItem('sodium_current_user')).uid : null));
+  
+  if (!currentUser || currentUser.adminRole !== 'Operations Head') {
+    // Redirect to member dashboard if not authorized
+    window.location.href = 'member.html';
+    return;
+  }
+  
+  // Update user info
+  const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+  document.getElementById('userAvatar').textContent = initials;
+  document.getElementById('welcomeTitle').textContent = `Welcome, ${currentUser.name}!`;
+  document.getElementById('welcomeMessage').innerHTML = `Monitor and manage daily operations, team performance, and resource allocation. <span style="color: var(--primary);">${currentUser.adminRole}</span>`;
+});
+</script>
+</body>
+</html>
