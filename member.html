@@ -19,23 +19,6 @@
     doc, 
     getDoc 
   } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-  // In member.html, add this check
-onAuthStateChanged(auth, async (user) => {
-  // Check if admin is trying to access member page
-  const adminUser = localStorage.getItem('sodium_admin_user');
-  if (adminUser) {
-    window.location.href = 'master-dashboard.html';
-    return;
-  }
-  
-  // Rest of the existing code...
-  if (user) {
-    // ... existing member page logic
-  } else {
-    window.location.href = 'login.html';
-  }
-});
   
   const firebaseConfig = {
     apiKey: "AIzaSyAUVsLH-YZdbhnH5U8tuS-31bTrPz6CZ8g",
@@ -119,49 +102,25 @@ header {
   color: var(--purple);
 }
 
-nav {
-  display: flex;
-  gap: 30px;
-  align-items: center;
-}
-
-nav a {
-  text-decoration: none;
-  color: #fff;
-  font-weight: 500;
-  font-size: 15px;
-  position: relative;
-  padding: 8px 0;
-  transition: all 0.3s;
-}
-
-nav a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--purple), var(--blue));
-  transition: width 0.3s;
-}
-
-nav a:hover::after {
-  width: 100%;
-}
-
-nav a.active {
-  color: var(--purple);
-}
-
-nav a.active::after {
-  width: 100%;
-}
-
 .user-menu {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+  background: rgba(255,255,255,0.1);
 }
 
 .user-avatar {
@@ -175,6 +134,152 @@ nav a.active::after {
   font-weight: 600;
   color: white;
   cursor: pointer;
+}
+
+/* Sidebar Menu */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 350px;
+  height: 100vh;
+  background: var(--bg-dark);
+  border-left: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+  z-index: 2000;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  box-shadow: -5px 0 30px rgba(0,0,0,0.5);
+}
+
+.sidebar.active {
+  right: 0;
+}
+
+.sidebar-header {
+  padding: 30px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-header h3 {
+  font-size: 20px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.close-sidebar {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  transition: color 0.3s;
+}
+
+.close-sidebar:hover {
+  color: #fff;
+}
+
+.sidebar-content {
+  padding: 0;
+}
+
+.menu-section {
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.menu-section:last-child {
+  border-bottom: none;
+}
+
+.menu-section h4 {
+  padding: 0 30px 15px;
+  color: #aaa;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 30px;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.05);
+  padding-left: 35px;
+}
+
+.menu-item i {
+  width: 20px;
+  color: var(--purple);
+}
+
+.menu-item span {
+  flex: 1;
+}
+
+.menu-item .badge {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.menu-item.danger {
+  color: #f87171;
+}
+
+.menu-item.danger i {
+  color: #f87171;
+}
+
+/* Role Status */
+.role-status {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 30px;
+}
+
+.role-status h5 {
+  color: #60a5fa;
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.role-status p {
+  color: #ccc;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.role-status .current-role {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
 }
 
 /* Member Dashboard */
@@ -274,6 +379,7 @@ nav a.active::after {
   display: flex;
   gap: 15px;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .action-btn {
@@ -366,183 +472,6 @@ nav a.active::after {
   font-weight: 600;
 }
 
-/* Events List */
-.events-list {
-  list-style: none;
-}
-
-.event-item {
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  background: rgba(255,255,255,0.03);
-  transition: all 0.3s;
-}
-
-.event-item:hover {
-  background: rgba(255,255,255,0.05);
-  transform: translateX(5px);
-}
-
-.event-date {
-  min-width: 60px;
-  text-align: center;
-  margin-right: 15px;
-}
-
-.event-day {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--purple);
-  line-height: 1;
-}
-
-.event-month {
-  font-size: 12px;
-  color: #aaa;
-  text-transform: uppercase;
-}
-
-.event-details {
-  flex: 1;
-}
-
-.event-title {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: #fff;
-}
-
-.event-time {
-  font-size: 13px;
-  color: #aaa;
-}
-
-.event-status {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status-upcoming {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-}
-
-.status-ongoing {
-  background: rgba(34, 197, 94, 0.2);
-  color: #4ade80;
-}
-
-/* Progress Cards */
-.progress-item {
-  margin-bottom: 20px;
-}
-
-.progress-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.progress-label {
-  font-weight: 500;
-  color: #fff;
-}
-
-.progress-value {
-  font-weight: 600;
-  color: var(--purple);
-}
-
-.progress-bar {
-  height: 8px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--purple), var(--blue));
-  border-radius: 4px;
-  transition: width 1s ease;
-}
-
-/* Departments Grid */
-.departments-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.dept-card {
-  background: rgba(255,255,255,0.03);
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  transition: all 0.3s;
-}
-
-.dept-card:hover {
-  background: rgba(168, 85, 247, 0.1);
-  transform: translateY(-5px);
-}
-
-.dept-icon {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, var(--purple), var(--blue));
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 15px;
-  font-size: 20px;
-}
-
-.dept-name {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: #fff;
-}
-
-.dept-members {
-  font-size: 12px;
-  color: #aaa;
-}
-
-/* Profile Section */
-.profile-info {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.info-item {
-  background: rgba(255,255,255,0.03);
-  padding: 15px;
-  border-radius: 12px;
-}
-
-.info-label {
-  font-size: 12px;
-  color: #aaa;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.info-value {
-  font-weight: 500;
-  color: #fff;
-}
-
 /* Loading State */
 .loading-container {
   display: flex;
@@ -619,8 +548,13 @@ nav a.active::after {
     flex-direction: column;
   }
   
-  nav {
-    gap: 20px;
+  .sidebar {
+    width: 100%;
+    right: -100%;
+  }
+  
+  .sidebar.active {
+    right: 0;
   }
 }
 
@@ -636,59 +570,23 @@ nav a.active::after {
   .stat-card {
     min-width: 120px;
   }
-  
-  nav a span {
-    display: none;
-  }
-  
-  nav a i {
-    font-size: 18px;
-  }
 }
 
-/* Notification Bell */
-.notification-bell {
-  position: relative;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 8px;
-  transition: all 0.3s;
-}
-
-.notification-bell:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.notification-badge {
-  position: absolute;
+/* Overlay for sidebar */
+.sidebar-overlay {
+  position: fixed;
   top: 0;
-  right: 0;
-  width: 8px;
-  height: 8px;
-  background: var(--danger);
-  border-radius: 50%;
-  border: 2px solid var(--bg-dark);
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1999;
+  display: none;
 }
 
-/* Logout Button */
-.logout-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: rgba(239, 68, 68, 0.1);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 10px;
-}
-
-.logout-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
-  transform: translateY(-2px);
+.sidebar-overlay.active {
+  display: block;
 }
 </style>
 </head>
@@ -696,25 +594,108 @@ nav a.active::after {
 <div class="blob blob1"></div>
 <div class="blob blob2"></div>
 
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar Menu -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h3><i class="fas fa-bars"></i> Menu</h3>
+    <button class="close-sidebar" id="closeSidebar">&times;</button>
+  </div>
+  
+  <div class="sidebar-content">
+    <!-- User Profile Section -->
+    <div class="menu-section">
+      <div style="padding: 0 30px 20px;">
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+          <div id="sidebarAvatar" style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--purple), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">
+            U
+          </div>
+          <div>
+            <div id="sidebarUserName" style="font-weight: 600; color: #fff; font-size: 16px;">Loading...</div>
+            <div id="sidebarUserEmail" style="color: #aaa; font-size: 13px;">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Role Status -->
+    <div class="role-status" id="roleStatus">
+      <h5><i class="fas fa-user-tag"></i> Current Role</h5>
+      <p id="currentRoleDesc">You haven't selected a specific role yet. Apply for a role to get access to specialized features.</p>
+      <div id="currentRoleBadge" class="current-role">No Role Assigned</div>
+    </div>
+    
+    <!-- Main Menu -->
+    <div class="menu-section">
+      <h4>Navigation</h4>
+      <a href="#" class="menu-item" id="menuDashboard">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="menu-item" id="menuProfile">
+        <i class="fas fa-user-circle"></i>
+        <span>My Profile</span>
+      </a>
+      <a href="#" class="menu-item" id="menuEvents">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Events</span>
+        <span class="badge">3 New</span>
+      </a>
+      <a href="#" class="menu-item" id="menuProjects">
+        <i class="fas fa-project-diagram"></i>
+        <span>Projects</span>
+      </a>
+    </div>
+    
+    <!-- Role & Department -->
+    <div class="menu-section">
+      <h4>Role & Department</h4>
+      <div class="menu-item" id="menuGetRole">
+        <i class="fas fa-user-plus"></i>
+        <span>Apply for Role</span>
+        <span class="badge">New</span>
+      </div>
+      <a href="#" class="menu-item" id="menuDepartment">
+        <i class="fas fa-building"></i>
+        <span>My Department</span>
+      </a>
+      <a href="#" class="menu-item" id="menuAchievements">
+        <i class="fas fa-trophy"></i>
+        <span>Achievements</span>
+      </a>
+    </div>
+    
+    <!-- Account -->
+    <div class="menu-section">
+      <h4>Account</h4>
+      <a href="#" class="menu-item" id="menuSettings">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </a>
+      <a href="#" class="menu-item" id="menuHelp">
+        <i class="fas fa-question-circle"></i>
+        <span>Help & Support</span>
+      </a>
+      <div class="menu-item danger" id="menuLogout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="logo">
     <div class="logo-icon">S</div>
     <div class="logo-text">SOD<span>IUM</span></div>
   </div>
   
-  <nav>
-    <a href="index.html"><i class="fas fa-home"></i> <span>Home</span></a>
-    <a href="#" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
-    <a href="#"><i class="fas fa-calendar-alt"></i> <span>Events</span></a>
-    <a href="#"><i class="fas fa-users"></i> <span>Community</span></a>
-    <a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a>
-  </nav>
-  
   <div class="user-menu">
-    <div class="notification-bell">
-      <i class="fas fa-bell"></i>
-      <div class="notification-badge"></div>
-    </div>
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fas fa-ellipsis-v"></i>
+    </button>
     <div class="user-avatar" id="userAvatar">U</div>
   </div>
 </header>
@@ -754,9 +735,9 @@ nav a.active::after {
           </div>
           
           <div class="stat-card">
-            <div class="icon"><i class="fas fa-star"></i></div>
-            <div class="stat-value" id="rank">#12</div>
-            <div class="stat-label">Community Rank</div>
+            <div class="icon"><i class="fas fa-user-tag"></i></div>
+            <div class="stat-value" id="roleStatusBadge">Member</div>
+            <div class="stat-label">Current Role</div>
           </div>
         </div>
         
@@ -764,14 +745,11 @@ nav a.active::after {
           <button class="action-btn" id="joinEventBtn">
             <i class="fas fa-plus"></i> Join Event
           </button>
+          <button class="action-btn secondary" id="applyRoleBtn">
+            <i class="fas fa-user-plus"></i> Apply for Role
+          </button>
           <button class="action-btn secondary" id="exploreBtn">
             <i class="fas fa-compass"></i> Explore Community
-          </button>
-          <button class="action-btn secondary" id="profileBtn">
-            <i class="fas fa-user-edit"></i> Edit Profile
-          </button>
-          <button class="logout-btn" id="logoutBtn">
-            <i class="fas fa-sign-out-alt"></i> Logout
           </button>
         </div>
       </div>
@@ -785,132 +763,52 @@ nav a.active::after {
           <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
           <a href="#" style="color: var(--blue); text-decoration: none; font-size: 14px;">View All</a>
         </div>
-        <ul class="events-list">
-          <li class="event-item">
-            <div class="event-date">
-              <div class="event-day">15</div>
-              <div class="event-month">MAY</div>
+        <div style="color: #ccc; font-size: 14px; margin-bottom: 20px;">Your upcoming activities</div>
+        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px;">
+          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--purple), var(--blue)); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-code"></i>
             </div>
-            <div class="event-details">
-              <div class="event-title">Tech Conference 2024</div>
-              <div class="event-time">10:00 AM • Main Auditorium</div>
+            <div>
+              <div style="font-weight: 600; color: #fff;">Web Dev Workshop</div>
+              <div style="font-size: 13px; color: #aaa;">May 15 • 2:00 PM</div>
             </div>
-            <span class="event-status status-upcoming">Upcoming</span>
-          </li>
-          <li class="event-item">
-            <div class="event-date">
-              <div class="event-day">22</div>
-              <div class="event-month">MAY</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #fbbf24); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-gamepad"></i>
             </div>
-            <div class="event-details">
-              <div class="event-title">AI Workshop</div>
-              <div class="event-time">2:00 PM • Lab 3</div>
+            <div>
+              <div style="font-weight: 600; color: #fff;">Gaming Tournament</div>
+              <div style="font-size: 13px; color: #aaa;">May 22 • 6:00 PM</div>
             </div>
-            <span class="event-status status-upcoming">Upcoming</span>
-          </li>
-          <li class="event-item">
-            <div class="event-date">
-              <div class="event-day">05</div>
-              <div class="event-month">JUN</div>
-            </div>
-            <div class="event-details">
-              <div class="event-title">Gaming Tournament</div>
-              <div class="event-time">6:00 PM • Game Zone</div>
-            </div>
-            <span class="event-status status-upcoming">Upcoming</span>
-          </li>
-        </ul>
-      </div>
-      
-      <!-- Progress Card -->
-      <div class="dashboard-card">
-        <div class="card-header">
-          <h3><i class="fas fa-chart-line"></i> Learning Progress</h3>
-          <span class="badge">75% Complete</span>
-        </div>
-        <div class="progress-item">
-          <div class="progress-header">
-            <span class="progress-label">Web Development</span>
-            <span class="progress-value">85%</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: 85%"></div>
-          </div>
-        </div>
-        <div class="progress-item">
-          <div class="progress-header">
-            <span class="progress-label">AI & Machine Learning</span>
-            <span class="progress-value">60%</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: 60%"></div>
-          </div>
-        </div>
-        <div class="progress-item">
-          <div class="progress-header">
-            <span class="progress-label">Game Development</span>
-            <span class="progress-value">45%</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: 45%"></div>
-          </div>
-        </div>
-        <div class="progress-item">
-          <div class="progress-header">
-            <span class="progress-label">Digital Media</span>
-            <span class="progress-value">90%</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: 90%"></div>
           </div>
         </div>
       </div>
       
-      <!-- Departments Card -->
+      <!-- Role Information Card -->
       <div class="dashboard-card">
         <div class="card-header">
-          <h3><i class="fas fa-building"></i> Departments</h3>
-          <a href="#" style="color: var(--blue); text-decoration: none; font-size: 14px;">Join</a>
+          <h3><i class="fas fa-user-tag"></i> Role Information</h3>
+          <span class="badge" id="roleTypeBadge">Basic</span>
         </div>
-        <p style="color: #aaa; margin-bottom: 20px; font-size: 14px;">Join a department to collaborate with like-minded members</p>
-        <div class="departments-grid">
-          <div class="dept-card">
-            <div class="dept-icon"><i class="fas fa-code"></i></div>
-            <div class="dept-name">IT Department</div>
-            <div class="dept-members">42 members</div>
-          </div>
-          <div class="dept-card">
-            <div class="dept-icon"><i class="fas fa-video"></i></div>
-            <div class="dept-name">Media Department</div>
-            <div class="dept-members">28 members</div>
-          </div>
-          <div class="dept-card">
-            <div class="dept-icon"><i class="fas fa-gamepad"></i></div>
-            <div class="dept-name">Gaming Department</div>
-            <div class="dept-members">35 members</div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Profile Card -->
-      <div class="dashboard-card">
-        <div class="card-header">
-          <h3><i class="fas fa-user-circle"></i> Your Profile</h3>
-          <a href="#" style="color: var(--blue); text-decoration: none; font-size: 14px;">Edit</a>
-        </div>
-        <div class="profile-info" id="profileInfo">
-          <!-- Will be populated by JavaScript -->
-        </div>
-        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-          <div class="progress-item">
-            <div class="progress-header">
-              <span class="progress-label">Profile Completion</span>
-              <span class="progress-value">80%</span>
+        <div id="roleInfoContent">
+          <p style="color: #aaa; margin-bottom: 20px;">You are currently a basic member. Apply for a specialized role to unlock more features and responsibilities.</p>
+          <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <i class="fas fa-info-circle" style="color: #60a5fa;"></i>
+              <div style="font-weight: 600; color: #60a5fa;">Benefits of Having a Role:</div>
             </div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 80%"></div>
-            </div>
+            <ul style="color: #ccc; font-size: 13px; padding-left: 20px;">
+              <li>Access to specialized projects</li>
+              <li>Priority event registration</li>
+              <li>Department-specific resources</li>
+              <li>Leadership opportunities</li>
+            </ul>
           </div>
+          <button class="action-btn secondary" id="learnMoreRolesBtn" style="width: 100%;">
+            <i class="fas fa-graduation-cap"></i> Learn About Available Roles
+          </button>
         </div>
       </div>
       
@@ -919,50 +817,22 @@ nav a.active::after {
         <div class="card-header">
           <h3><i class="fas fa-history"></i> Recent Activity</h3>
         </div>
-        <div style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Your latest contributions</div>
-        <ul class="events-list">
-          <li class="event-item">
+        <div style="color: #ccc; font-size: 14px; margin-bottom: 20px;">Your latest contributions</div>
+        <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <i class="fas fa-check-circle" style="color: var(--success);"></i>
             <div style="flex: 1;">
-              <div class="event-title">Submitted Web Project</div>
-              <div class="event-time">2 hours ago</div>
+              <div style="font-size: 13px; color: #fff;">Completed Profile Setup</div>
+              <div style="font-size: 12px; color: #aaa;">2 hours ago</div>
             </div>
-            <span class="event-status status-upcoming">IT Dept</span>
-          </li>
-          <li class="event-item">
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-users" style="color: var(--blue);"></i>
             <div style="flex: 1;">
-              <div class="event-title">Joined AI Workshop</div>
-              <div class="event-time">1 day ago</div>
+              <div style="font-size: 13px; color: #fff;">Joined SODIUM Community</div>
+              <div style="font-size: 12px; color: #aaa;">1 day ago</div>
             </div>
-            <span class="event-status status-ongoing">Completed</span>
-          </li>
-          <li class="event-item">
-            <div style="flex: 1;">
-              <div class="event-title">Posted in Community</div>
-              <div class="event-time">3 days ago</div>
-            </div>
-            <span class="event-status status-upcoming">Forum</span>
-          </li>
-        </ul>
-      </div>
-      
-      <!-- Quick Links -->
-      <div class="dashboard-card">
-        <div class="card-header">
-          <h3><i class="fas fa-link"></i> Quick Links</h3>
-        </div>
-        <div style="display: grid; gap: 15px; margin-top: 20px;">
-          <a href="#" class="action-btn secondary" style="text-align: left; justify-content: flex-start;">
-            <i class="fas fa-book"></i> Learning Resources
-          </a>
-          <a href="#" class="action-btn secondary" style="text-align: left; justify-content: flex-start;">
-            <i class="fas fa-tasks"></i> Project Submissions
-          </a>
-          <a href="#" class="action-btn secondary" style="text-align: left; justify-content: flex-start;">
-            <i class="fas fa-comments"></i> Community Forum
-          </a>
-          <a href="#" class="action-btn secondary" style="text-align: left; justify-content: flex-start;">
-            <i class="fas fa-certificate"></i> Get Certified
-          </a>
+          </div>
         </div>
       </div>
     </div>
@@ -983,6 +853,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   const { auth, db, onAuthStateChanged, signOut, doc, getDoc } = window.firebaseAuth;
   
+  let userData = null;
+  
   // Check authentication state
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -991,7 +863,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         
         if (userDoc.exists()) {
-          const userData = userDoc.data();
+          userData = userDoc.data();
+          userData.uid = user.uid;
           
           // Hide loading, show content
           document.getElementById('loadingContainer').style.display = 'none';
@@ -1008,7 +881,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       } catch (error) {
         console.error('Error loading user data:', error);
-        redirectToLogin();
+        // For demo purposes, create demo user data
+        userData = {
+          uid: 'demo_user',
+          name: 'Demo User',
+          email: user.email,
+          username: 'demo',
+          role: 'member',
+          currentRole: null,
+          roleStatus: 'none'
+        };
+        
+        document.getElementById('loadingContainer').style.display = 'none';
+        document.getElementById('dashboardContent').style.display = 'block';
+        updateUserInfo(userData);
+        setupEventListeners(userData);
       }
     } else {
       redirectToLogin();
@@ -1022,45 +909,108 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Update user avatar
     const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase();
     document.getElementById('userAvatar').textContent = initials;
+    document.getElementById('sidebarAvatar').textContent = initials;
+    document.getElementById('sidebarUserName').textContent = userData.name;
+    document.getElementById('sidebarUserEmail').textContent = userData.email;
     
-    // Update profile info
-    const joinDate = new Date(userData.createdAt).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    // Update role information
+    updateRoleInfo(userData);
+  }
+  
+  function updateRoleInfo(userData) {
+    const currentRole = userData.currentRole || 'No Role Assigned';
+    const roleStatus = userData.roleStatus || 'none';
     
-    document.getElementById('profileInfo').innerHTML = `
-      <div class="info-item">
-        <div class="info-label">Full Name</div>
-        <div class="info-value">${userData.name}</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Username</div>
-        <div class="info-value">@${userData.username}</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Email</div>
-        <div class="info-value">${userData.email}</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Phone</div>
-        <div class="info-value">${userData.phone || 'Not provided'}</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Member Since</div>
-        <div class="info-value">${joinDate}</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Role</div>
-        <div class="info-value">${userData.role || 'Member'}</div>
-      </div>
-    `;
+    // Update role badges
+    document.getElementById('roleStatusBadge').textContent = currentRole;
+    document.getElementById('currentRoleBadge').textContent = currentRole;
+    
+    // Update role status description
+    let roleDesc = '';
+    let roleType = 'Basic';
+    
+    if (roleStatus === 'applied') {
+      roleDesc = 'Your role application is pending review by administrators.';
+      roleType = 'Pending Review';
+    } else if (roleStatus === 'approved') {
+      roleDesc = `You are assigned as: ${currentRole}. You have access to specialized features.`;
+      roleType = currentRole;
+    } else if (roleStatus === 'rejected') {
+      roleDesc = 'Your role application was not approved. You can apply again with more details.';
+      roleType = 'Application Rejected';
+    } else {
+      roleDesc = 'You haven\'t selected a specific role yet. Apply for a role to get access to specialized features.';
+      roleType = 'Basic Member';
+    }
+    
+    document.getElementById('currentRoleDesc').textContent = roleDesc;
+    document.getElementById('roleTypeBadge').textContent = roleType;
+    
+    // Update role info content
+    const roleInfoContent = document.getElementById('roleInfoContent');
+    if (roleStatus === 'approved') {
+      roleInfoContent.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--purple), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 24px;">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <h4 style="color: #fff; margin-bottom: 10px;">${currentRole}</h4>
+          <p style="color: #aaa; font-size: 14px;">You are an active ${currentRole} in SODIUM</p>
+        </div>
+        <div style="background: rgba(34, 197, 94, 0.1); padding: 15px; border-radius: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <i class="fas fa-check-circle" style="color: #4ade80;"></i>
+            <div style="font-weight: 600; color: #4ade80;">Role Benefits Activated</div>
+          </div>
+          <ul style="color: #ccc; font-size: 13px; padding-left: 20px;">
+            <li>Access to specialized projects</li>
+            <li>Priority event registration</li>
+            <li>Department-specific resources</li>
+            <li>Leadership opportunities</li>
+          </ul>
+        </div>
+      `;
+    }
   }
   
   function setupEventListeners(userData) {
+    // Sidebar toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const closeSidebar = document.getElementById('closeSidebar');
+    
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.add('active');
+      sidebarOverlay.classList.add('active');
+    });
+    
+    closeSidebar.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    });
+    
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    });
+    
+    // Apply for Role buttons
+    const applyRoleBtn = document.getElementById('applyRoleBtn');
+    const menuGetRole = document.getElementById('menuGetRole');
+    const learnMoreRolesBtn = document.getElementById('learnMoreRolesBtn');
+    
+    const goToRolePage = () => {
+      window.location.href = 'role.html';
+    };
+    
+    applyRoleBtn.addEventListener('click', goToRolePage);
+    menuGetRole.addEventListener('click', goToRolePage);
+    learnMoreRolesBtn.addEventListener('click', goToRolePage);
+    
     // Logout functionality
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
+    const logoutBtn = document.getElementById('menuLogout');
+    logoutBtn.addEventListener('click', async () => {
       try {
         await signOut(auth);
         window.location.href = 'login.html';
@@ -1080,33 +1030,62 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.location.href = 'index.html#departments';
     });
     
-    // Profile button
-    document.getElementById('profileBtn').addEventListener('click', () => {
-      alert('Profile editor coming soon!');
+    // Menu items
+    document.getElementById('menuDashboard').addEventListener('click', (e) => {
+      e.preventDefault();
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
     });
     
-    // Add animation to progress bars
-    setTimeout(() => {
-      const progressBars = document.querySelectorAll('.progress-fill');
-      progressBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => {
-          bar.style.width = width;
-        }, 100);
-      });
-    }, 500);
+    document.getElementById('menuProfile').addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('Profile page coming soon!');
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    });
     
-    // Update stats with random data for demo
-    updateStats();
+    document.getElementById('menuEvents').addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('Events page coming soon!');
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    });
+    
+    // Check if user has pending role application
+    checkRoleApplication(userData);
   }
   
-  function updateStats() {
-    // These would come from Firebase in a real app
-    document.getElementById('eventsCount').textContent = Math.floor(Math.random() * 10) + 1;
-    document.getElementById('achievementsCount').textContent = Math.floor(Math.random() * 15) + 1;
-    document.getElementById('connectionsCount').textContent = Math.floor(Math.random() * 100) + 20;
-    document.getElementById('rank').textContent = `#${Math.floor(Math.random() * 50) + 1}`;
+  function checkRoleApplication(userData) {
+    // Check localStorage for pending applications
+    const pendingApps = JSON.parse(localStorage.getItem('sodium_role_applications') || '[]');
+    const userApp = pendingApps.find(app => app.userId === userData.uid);
+    
+    if (userApp) {
+      // Update UI to show pending application
+      document.getElementById('currentRoleBadge').textContent = 'Pending Review';
+      document.getElementById('currentRoleDesc').textContent = `Your application for ${userApp.role} is under review.`;
+      document.getElementById('roleTypeBadge').textContent = 'Pending';
+      document.getElementById('roleStatusBadge').textContent = 'Pending';
+      
+      // Update role info content
+      document.getElementById('roleInfoContent').innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f59e0b, #fbbf24); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 24px;">
+            <i class="fas fa-clock"></i>
+          </div>
+          <h4 style="color: #fff; margin-bottom: 10px;">Application Pending</h4>
+          <p style="color: #aaa; font-size: 14px;">You applied for: ${userApp.role}</p>
+          <p style="color: #f59e0b; font-size: 13px; margin-top: 10px;">Status: Under Review</p>
+        </div>
+        <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <i class="fas fa-info-circle" style="color: #fbbf24;"></i>
+            <div style="font-weight: 600; color: #fbbf24;">Application Status</div>
+          </div>
+          <p style="color: #ccc; font-size: 13px;">Your application has been submitted and is waiting for admin approval. You'll receive a notification once it's reviewed.</p>
+        </div>
+      `;
+    }
   }
   
   function redirectToLogin() {
