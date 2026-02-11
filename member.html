@@ -87,6 +87,63 @@ function updatePendingApplicationsBadge() {
   }
 }
 
+  // Check if user has admin role
+function checkAdminRole(userData) {
+  const adminAccessSection = document.getElementById('adminAccessSection');
+  const adminRoleBadge = document.getElementById('adminRoleBadge');
+  const adminPendingBadge = document.getElementById('adminPendingBadge');
+  
+  if (userData.adminRole) {
+    // Show admin access section
+    adminAccessSection.style.display = 'block';
+    
+    // Update admin role badge
+    adminRoleBadge.textContent = userData.adminRole;
+    
+    // Set role color
+    const roleColors = {
+      'CEO': '#fbbf24',
+      'Operations Head': '#3b82f6',
+      'Technical Lead': '#8b5cf6',
+      'Strategic Director': '#10b981',
+      'Community Guidance Director': '#ec4899',
+      'Media Manager': '#f59e0b'
+    };
+    
+    if (roleColors[userData.adminRole]) {
+      adminRoleBadge.style.background = `linear-gradient(135deg, ${roleColors[userData.adminRole]}, ${roleColors[userData.adminRole]}99)`;
+    }
+    
+    // Setup admin dashboard link
+    document.getElementById('menuAdminDashboard').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = 'admin-dashboard-template.html';
+    });
+    
+    // Setup role management link
+    document.getElementById('menuRoleManagement').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    });
+    
+    // Update pending applications count
+    updatePendingApplicationsBadge();
+  }
+}
+
+function updatePendingApplicationsBadge() {
+  const applications = JSON.parse(localStorage.getItem('sodium_role_applications') || '[]');
+  const pendingCount = applications.filter(a => a.status === 'pending').length;
+  const badge = document.getElementById('adminPendingBadge');
+  
+  if (pendingCount > 0) {
+    badge.textContent = pendingCount;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
