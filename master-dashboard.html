@@ -9,7 +9,17 @@
 <!-- Add Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { 
+    getFirestore, 
+    collection, 
+    getDocs, 
+    doc, 
+    getDoc, 
+    updateDoc,
+    query,
+    where
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   
   const firebaseConfig = {
     apiKey: "AIzaSyAUVsLH-YZdbhnH5U8tuS-31bTrPz6CZ8g",
@@ -22,9 +32,14 @@
   };
 
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
   const db = getFirestore(app);
   
-  window.firebaseAdmin = { db, collection, getDocs, doc, updateDoc, deleteDoc };
+  window.firebaseAdmin = { 
+    app, auth, db, 
+    collection, getDocs, doc, getDoc, updateDoc,
+    query, where, signOut
+  };
 </script>
 <style>
 :root {
@@ -106,49 +121,30 @@ header {
   gap: 5px;
 }
 
-nav {
-  display: flex;
-  gap: 30px;
-  align-items: center;
-}
-
-nav a {
-  text-decoration: none;
-  color: #fff;
-  font-weight: 500;
-  font-size: 15px;
-  position: relative;
-  padding: 8px 0;
-  transition: all 0.3s;
-}
-
-nav a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--gold), #f59e0b);
-  transition: width 0.3s;
-}
-
-nav a:hover::after {
-  width: 100%;
-}
-
-nav a.active {
-  color: var(--gold);
-}
-
-nav a.active::after {
-  width: 100%;
-}
-
-.user-menu {
+.header-actions {
   display: flex;
   align-items: center;
   gap: 15px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
 }
 
 .user-avatar {
@@ -182,41 +178,25 @@ nav a.active::after {
   overflow: hidden;
 }
 
-.admin-banner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.03)"/></svg>');
-  background-size: cover;
-}
-
-.admin-content {
-  position: relative;
-  z-index: 1;
-}
-
-.admin-content h1 {
+.admin-banner h1 {
   font-size: 36px;
   margin-bottom: 10px;
   background: linear-gradient(135deg, var(--gold), #f59e0b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.admin-content p {
+.admin-banner p {
   color: #ccc;
   font-size: 16px;
   max-width: 600px;
   margin-bottom: 30px;
 }
 
+/* Stats Cards */
 .admin-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -231,24 +211,12 @@ nav a.active::after {
   padding: 25px;
   text-align: center;
   transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
 }
 
 .admin-stat-card:hover {
   transform: translateY(-5px);
   border-color: var(--gold);
   box-shadow: 0 10px 20px rgba(251, 191, 36, 0.2);
-}
-
-.admin-stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(135deg, var(--gold), #f59e0b);
 }
 
 .stat-value {
@@ -265,30 +233,13 @@ nav a.active::after {
   letter-spacing: 1px;
 }
 
-.stat-change {
-  font-size: 12px;
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-
-.stat-change.positive {
-  color: var(--success);
-}
-
-.stat-change.negative {
-  color: var(--danger);
-}
-
 .stat-icon {
   font-size: 28px;
   margin-bottom: 15px;
   color: var(--gold);
 }
 
-/* Quick Actions */
+/* Admin Actions */
 .admin-actions {
   display: flex;
   gap: 15px;
@@ -354,23 +305,11 @@ nav a.active::after {
   border-radius: 20px;
   padding: 30px;
   transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
 }
 
 .admin-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
-}
-
-.admin-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(135deg, var(--gold), #f59e0b);
+  box-shadow: 0 20px 40px rgba(251, 191, 36, 0.2);
 }
 
 .card-header {
@@ -397,264 +336,68 @@ nav a.active::after {
   font-weight: 600;
 }
 
-/* Users Table */
-.users-table-container {
-  overflow-x: auto;
-}
-
-.users-table {
+/* Form Inputs */
+.form-input {
   width: 100%;
-  border-collapse: collapse;
-}
-
-.users-table th {
-  text-align: left;
-  padding: 15px;
+  padding: 12px 16px;
   background: rgba(255,255,255,0.05);
-  color: #aaa;
-  font-weight: 600;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.users-table td {
-  padding: 15px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  color: #ccc;
-}
-
-.users-table tr:hover {
-  background: rgba(255,255,255,0.03);
-}
-
-.user-role {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.role-admin {
-  background: rgba(251, 191, 36, 0.2);
-  color: var(--gold);
-}
-
-.role-member {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-}
-
-.user-status {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status-active {
-  background: rgba(34, 197, 94, 0.2);
-  color: #4ade80;
-}
-
-.status-inactive {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
-}
-
-.user-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.action-icon {
-  width: 32px;
-  height: 32px;
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+}
+
+/* Admin Role Options */
+.admin-role-option {
+  background: rgba(255,255,255,0.03);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 15px;
   cursor: pointer;
   transition: all 0.3s;
 }
 
-.action-icon.edit {
-  background: rgba(59, 130, 246, 0.1);
-  color: #60a5fa;
+.admin-role-option:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--gold);
+  transform: translateY(-2px);
 }
 
-.action-icon.edit:hover {
-  background: rgba(59, 130, 246, 0.2);
+.admin-role-option.selected {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: var(--gold);
 }
 
-.action-icon.delete {
+/* Message Display */
+.message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.message.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  display: block;
+}
+
+.message.error {
   background: rgba(239, 68, 68, 0.1);
   color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  display: block;
 }
 
-.action-icon.delete:hover {
-  background: rgba(239, 68, 68, 0.2);
-}
-
-.action-icon.view {
-  background: rgba(34, 197, 94, 0.1);
-  color: #4ade80;
-}
-
-.action-icon.view:hover {
-  background: rgba(34, 197, 94, 0.2);
-}
-
-/* Department Stats */
-.departments-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.dept-stat-card {
-  background: rgba(255,255,255,0.03);
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  transition: all 0.3s;
-}
-
-.dept-stat-card:hover {
-  background: rgba(168, 85, 247, 0.1);
-  transform: translateY(-5px);
-}
-
-.dept-stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 5px;
-}
-
-.dept-stat-label {
-  font-size: 12px;
-  color: #aaa;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.dept-stat-growth {
-  font-size: 11px;
-  margin-top: 5px;
-  color: var(--success);
-}
-
-/* Recent Activity */
-.activity-list {
-  list-style: none;
-}
-
-.activity-item {
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  background: rgba(255,255,255,0.03);
-  transition: all 0.3s;
-}
-
-.activity-item:hover {
-  background: rgba(255,255,255,0.05);
-}
-
-.activity-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--purple), var(--blue));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 15px;
-  font-size: 16px;
-}
-
-.activity-details {
-  flex: 1;
-}
-
-.activity-title {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: #fff;
-}
-
-.activity-time {
-  font-size: 13px;
-  color: #aaa;
-}
-
-.activity-user {
-  font-size: 13px;
-  color: var(--gold);
-}
-
-/* System Health */
-.system-health {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.health-item {
-  background: rgba(255,255,255,0.03);
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-}
-
-.health-item.good {
-  border: 1px solid rgba(34, 197, 94, 0.3);
-}
-
-.health-item.warning {
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.health-item.critical {
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.health-icon {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.health-item.good .health-icon {
-  color: var(--success);
-}
-
-.health-item.warning .health-icon {
-  color: var(--warning);
-}
-
-.health-item.critical .health-icon {
-  color: var(--danger);
-}
-
-.health-label {
-  font-size: 13px;
-  color: #aaa;
-  margin-bottom: 5px;
-}
-
-.health-value {
-  font-weight: 700;
-  font-size: 18px;
-  color: #fff;
-}
-
-/* Loading State */
+/* Loading */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -677,83 +420,11 @@ nav a.active::after {
   to { transform: rotate(360deg); }
 }
 
-/* Modal */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(10px);
-  z-index: 2000;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: var(--bg-dark);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 20px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  padding: 25px 30px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  font-size: 20px;
-  color: #fff;
-}
-
-.close-modal {
-  background: none;
-  border: none;
-  color: #aaa;
-  font-size: 24px;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.close-modal:hover {
-  color: #fff;
-}
-
-.modal-body {
-  padding: 30px;
-}
-
-/* Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.admin-card {
-  animation: fadeInUp 0.6s ease forwards;
-}
-
 /* Responsive */
 @media (max-width: 1200px) {
   .dashboard {
     padding: 140px 40px 40px;
   }
-  
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
@@ -763,33 +434,17 @@ nav a.active::after {
   header {
     padding: 15px 25px;
   }
-  
   .dashboard {
     padding: 130px 25px 40px;
   }
-  
   .admin-banner {
     padding: 30px 25px;
   }
-  
   .admin-stats {
     grid-template-columns: repeat(2, 1fr);
   }
-  
   .admin-actions {
     flex-direction: column;
-  }
-  
-  nav {
-    gap: 15px;
-  }
-  
-  nav a span {
-    display: none;
-  }
-  
-  nav a i {
-    font-size: 18px;
   }
 }
 
@@ -797,14 +452,8 @@ nav a.active::after {
   .admin-stats {
     grid-template-columns: 1fr;
   }
-  
   .logo-text {
     font-size: 18px;
-  }
-  
-  .admin-badge {
-    font-size: 10px;
-    padding: 3px 8px;
   }
 }
 </style>
@@ -816,17 +465,13 @@ nav a.active::after {
 <header>
   <div class="logo">
     <div class="logo-icon">S</div>
-    <div class="logo-text">SOD<span>IUM</span><span class="admin-badge"><i class="fas fa-crown"></i> MASTER ADMIN</span></div>
+    <div class="logo-text">SOD<span>IUM</span><span class="admin-badge"><i class="fas fa-crown"></i> MASTER</span></div>
   </div>
   
-  <nav>
-    <a href="#" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
-    <a href="#"><i class="fas fa-users"></i> <span>Users</span></a>
-    <a href="#"><i class="fas fa-chart-bar"></i> <span>Analytics</span></a>
-    <a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a>
-  </nav>
-  
-  <div class="user-menu">
+  <div class="header-actions">
+    <a href="member.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Member Dashboard
+    </a>
     <div class="user-avatar" id="adminAvatar">A</div>
   </div>
 </header>
@@ -838,150 +483,237 @@ nav a.active::after {
     <p>Loading Master Dashboard...</p>
   </div>
   
-  <!-- Content (hidden initially) -->
+  <!-- Content -->
   <div id="dashboardContent" style="display: none;">
     <!-- Admin Banner -->
     <section class="admin-banner">
-      <div class="admin-content">
-        <h1><i class="fas fa-crown"></i> Master Control Panel</h1>
-        <p>Welcome to the SODIUM Master Dashboard. Monitor and manage all system activities from here.</p>
-        
-        <div class="admin-stats">
-          <div class="admin-stat-card">
-            <div class="stat-icon"><i class="fas fa-users"></i></div>
-            <div class="stat-value" id="totalUsers">0</div>
-            <div class="stat-label">Total Users</div>
-            <div class="stat-change positive" id="userGrowth"><i class="fas fa-arrow-up"></i> 12% this month</div>
-          </div>
-          
-          <div class="admin-stat-card">
-            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
-            <div class="stat-value" id="activeEvents">0</div>
-            <div class="stat-label">Active Events</div>
-            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 3 upcoming</div>
-          </div>
-          
-          <div class="admin-stat-card">
-            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
-            <div class="stat-value" id="engagementRate">0%</div>
-            <div class="stat-label">Engagement Rate</div>
-            <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 8% increase</div>
-          </div>
-          
-          <div class="admin-stat-card">
-            <div class="stat-icon"><i class="fas fa-server"></i></div>
-            <div class="stat-value" id="systemHealth">100%</div>
-            <div class="stat-label">System Health</div>
-            <div class="stat-change positive"><i class="fas fa-check-circle"></i> All systems OK</div>
-          </div>
+      <h1><i class="fas fa-crown"></i> Master Control Panel</h1>
+      <p id="welcomeMessage">Welcome to the SODIUM Master Dashboard. Manage users, roles, and system settings.</p>
+      
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-value" id="totalUsers">0</div>
+          <div class="stat-label">Total Users</div>
         </div>
-        
-        <div class="admin-actions">
-          <button class="admin-btn" id="addUserBtn">
-            <i class="fas fa-user-plus"></i> Add User
-          </button>
-          <button class="admin-btn secondary" id="createEventBtn">
-            <i class="fas fa-calendar-plus"></i> Create Event
-          </button>
-          <button class="admin-btn secondary" id="exportDataBtn">
-            <i class="fas fa-download"></i> Export Data
-          </button>
-          <button class="admin-btn danger" id="logoutBtn">
-            <i class="fas fa-sign-out-alt"></i> Logout
-          </button>
+        <div class="admin-stat-card">
+          <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
+          <div class="stat-value" id="adminUsersCount">0</div>
+          <div class="stat-label">Admin Users</div>
         </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon"><i class="fas fa-clock"></i></div>
+          <div class="stat-value" id="pendingApplications">0</div>
+          <div class="stat-label">Role Applications</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+          <div class="stat-value" id="activeEvents">3</div>
+          <div class="stat-label">Active Events</div>
+        </div>
+      </div>
+      
+      <div class="admin-actions">
+        <button class="admin-btn" id="goToRoleApplications">
+          <i class="fas fa-file-alt"></i> Review Role Applications
+        </button>
+        <button class="admin-btn secondary" id="exportDataBtn">
+          <i class="fas fa-download"></i> Export Data
+        </button>
+        <button class="admin-btn danger" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
       </div>
     </section>
     
     <!-- Dashboard Grid -->
     <div class="dashboard-grid">
-      <!-- Users Management Card -->
+      <!-- Admin Role Assignment Card -->
       <div class="admin-card">
         <div class="card-header">
-          <h3><i class="fas fa-users-cog"></i> User Management</h3>
-          <span class="badge" id="onlineUsers">0 Online</span>
+          <h3><i class="fas fa-user-shield"></i> Assign Admin Roles</h3>
+          <span class="badge" id="adminUsersCount2">0 Admin Users</span>
         </div>
-        <div class="users-table-container">
-          <table class="users-table" id="usersTable">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Joined</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="usersTableBody">
-              <!-- Will be populated by JavaScript -->
-            </tbody>
-          </table>
+        
+        <div style="margin-bottom: 30px;">
+          <div class="message" id="assignRoleMessage"></div>
+          
+          <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" id="searchUser" class="form-input" placeholder="Search users by name or email" style="flex: 1;">
+            <button class="admin-btn" id="searchUserBtn">
+              <i class="fas fa-search"></i> Search
+            </button>
+          </div>
+          
+          <!-- Search Results -->
+          <div id="userSearchResults" style="display: none;">
+            <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+              <div id="selectedUserInfo"></div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label style="color: #ccc; font-size: 14px; margin-bottom: 15px; display: block;">
+                <i class="fas fa-user-tag"></i> Select Admin Role
+              </label>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <!-- CEO -->
+                <div class="admin-role-option" data-role="CEO">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-crown"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 600; color: #fff;">CEO</div>
+                      <div style="font-size: 12px; color: #aaa;">Chief Executive Officer</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Operations Head -->
+                <div class="admin-role-option" data-role="Operations Head">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-cogs"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 600; color: #fff;">Operations Head</div>
+                      <div style="font-size: 12px; color: #aaa;">Manage daily operations</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Technical Lead -->
+                <div class="admin-role-option" data-role="Technical Lead">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-code"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 600; color: #fff;">Technical Lead</div>
+                      <div style="font-size: 12px; color: #aaa;">Lead technical projects</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Strategic Director -->
+                <div class="admin-role-option" data-role="Strategic Director">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-chess-board"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 600; color: #fff;">Strategic Director</div>
+                      <div style="font-size: 12px; color: #aaa;">Develop organization strategy</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Community Guidance Director -->
+                <div class="admin-role-option" data-role="Community Guidance Director">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ec4899, #db2777); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 600; color: #fff;">Community Guidance Director</div>
+                      <div style="font-size: 12px; color: #aaa;">Guide community development</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Media Manager -->
+                <div class="admin-role-option" data-role="Media Manager">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-photo-video"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 600; color: #fff;">Media Manager</div>
+                      <div style="font-size: 12px; color: #aaa;">Manage media operations</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label style="color: #ccc; font-size: 14px; margin-bottom: 15px; display: block;">
+                <i class="fas fa-key"></i> Permissions
+              </label>
+              <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px;">
+                <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px; cursor: pointer;">
+                  <input type="checkbox" id="permissionDashboard" checked style="width: 18px; height: 18px;">
+                  <span style="color: #ccc;">Access Admin Dashboard</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px; cursor: pointer;">
+                  <input type="checkbox" id="permissionUsers" checked style="width: 18px; height: 18px;">
+                  <span style="color: #ccc;">Manage Users</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px; cursor: pointer;">
+                  <input type="checkbox" id="permissionRoles" checked style="width: 18px; height: 18px;">
+                  <span style="color: #ccc;">Assign Roles</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                  <input type="checkbox" id="permissionContent" checked style="width: 18px; height: 18px;">
+                  <span style="color: #ccc;">Manage Content</span>
+                </label>
+              </div>
+            </div>
+            
+            <button class="admin-btn" id="assignAdminRoleBtn" style="width: 100%;">
+              <i class="fas fa-user-shield"></i> Assign Admin Role
+            </button>
+          </div>
+        </div>
+        
+        <!-- Current Admins List -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px;">
+          <h4 style="color: #aaa; font-size: 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-users-cog"></i> Current Admin Team
+          </h4>
+          <div id="currentAdminsList" style="display: grid; gap: 15px;">
+            <!-- Populated by JavaScript -->
+          </div>
         </div>
       </div>
       
-      <!-- Departments Analytics -->
+      <!-- Role Applications Overview Card -->
       <div class="admin-card">
         <div class="card-header">
-          <h3><i class="fas fa-building"></i> Departments Analytics</h3>
-          <a href="#" style="color: var(--gold); text-decoration: none; font-size: 14px;">View Details</a>
+          <h3><i class="fas fa-file-alt"></i> Recent Role Applications</h3>
+          <a href="admin.html" style="color: var(--gold); text-decoration: none; font-size: 14px;">View All</a>
         </div>
-        <div class="departments-stats">
-          <div class="dept-stat-card">
-            <div class="dept-stat-value" id="itMembers">0</div>
-            <div class="dept-stat-label">IT Department</div>
-            <div class="dept-stat-growth">+5 this month</div>
-          </div>
-          <div class="dept-stat-card">
-            <div class="dept-stat-value" id="mediaMembers">0</div>
-            <div class="dept-stat-label">Media Department</div>
-            <div class="dept-stat-growth">+3 this month</div>
-          </div>
-          <div class="dept-stat-card">
-            <div class="dept-stat-value" id="gamingMembers">0</div>
-            <div class="dept-stat-label">Gaming Department</div>
-            <div class="dept-stat-growth">+7 this month</div>
-          </div>
+        <div id="recentApplications">
+          <!-- Populated by JavaScript -->
         </div>
       </div>
       
-      <!-- Recent Activity -->
-      <div class="admin-card">
-        <div class="card-header">
-          <h3><i class="fas fa-history"></i> Recent Activity</h3>
-          <a href="#" style="color: var(--gold); text-decoration: none; font-size: 14px;">View All</a>
-        </div>
-        <ul class="activity-list" id="activityList">
-          <!-- Will be populated by JavaScript -->
-        </ul>
-      </div>
-      
-      <!-- System Health -->
+      <!-- System Health Card -->
       <div class="admin-card">
         <div class="card-header">
           <h3><i class="fas fa-heartbeat"></i> System Health</h3>
           <span class="badge">All Systems Go</span>
         </div>
-        <div class="system-health">
-          <div class="health-item good">
-            <div class="health-icon"><i class="fas fa-database"></i></div>
-            <div class="health-label">Database</div>
-            <div class="health-value">100%</div>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+          <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+            <i class="fas fa-database" style="color: #10b981; font-size: 24px; margin-bottom: 10px;"></i>
+            <div style="font-size: 12px; color: #aaa;">Database</div>
+            <div style="font-size: 18px; font-weight: 600; color: #4ade80;">100%</div>
           </div>
-          <div class="health-item good">
-            <div class="health-icon"><i class="fas fa-server"></i></div>
-            <div class="health-label">Server</div>
-            <div class="health-value">99.9%</div>
+          <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+            <i class="fas fa-server" style="color: #3b82f6; font-size: 24px; margin-bottom: 10px;"></i>
+            <div style="font-size: 12px; color: #aaa;">Server</div>
+            <div style="font-size: 18px; font-weight: 600; color: #60a5fa;">99.9%</div>
           </div>
-          <div class="health-item good">
-            <div class="health-icon"><i class="fas fa-network-wired"></i></div>
-            <div class="health-label">Network</div>
-            <div class="health-value">100%</div>
+          <div style="background: rgba(245, 158, 11, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+            <i class="fas fa-network-wired" style="color: #f59e0b; font-size: 24px; margin-bottom: 10px;"></i>
+            <div style="font-size: 12px; color: #aaa;">Network</div>
+            <div style="font-size: 18px; font-weight: 600; color: #fbbf24;">100%</div>
           </div>
-          <div class="health-item good">
-            <div class="health-icon"><i class="fas fa-shield-alt"></i></div>
-            <div class="health-label">Security</div>
-            <div class="health-value">100%</div>
+          <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+            <i class="fas fa-shield-alt" style="color: #8b5cf6; font-size: 24px; margin-bottom: 10px;"></i>
+            <div style="font-size: 12px; color: #aaa;">Security</div>
+            <div style="font-size: 18px; font-weight: 600; color: #a78bfa;">100%</div>
           </div>
         </div>
       </div>
@@ -989,323 +721,363 @@ nav a.active::after {
   </div>
 </main>
 
-<!-- Add User Modal -->
-<div class="modal" id="addUserModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3><i class="fas fa-user-plus"></i> Add New User</h3>
-      <button class="close-modal" id="closeAddUserModal">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div id="modalMessage"></div>
-      <form id="addUserForm">
-        <div style="display: grid; gap: 20px;">
-          <div>
-            <label style="display: block; margin-bottom: 8px; color: #ccc; font-size: 14px;">Full Name</label>
-            <input type="text" id="newUserName" class="form-input" placeholder="Enter full name" required style="width: 100%;">
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; color: #ccc; font-size: 14px;">Email</label>
-            <input type="email" id="newUserEmail" class="form-input" placeholder="Enter email" required style="width: 100%;">
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; color: #ccc; font-size: 14px;">Role</label>
-            <select id="newUserRole" class="form-input" style="width: 100%;">
-              <option value="member">Member</option>
-              <option value="admin">Admin</option>
-              <option value="moderator">Moderator</option>
-            </select>
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; color: #ccc; font-size: 14px;">Department</label>
-            <select id="newUserDepartment" class="form-input" style="width: 100%;">
-              <option value="it">IT Department</option>
-              <option value="media">Media Department</option>
-              <option value="gaming">Gaming Department</option>
-              <option value="none">None</option>
-            </select>
-          </div>
-          <button type="submit" class="admin-btn" style="width: 100%;">
-            <i class="fas fa-save"></i> Create User
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   // Check admin authentication
-  const adminUser = localStorage.getItem('sodium_admin_user');
+  const adminUser = JSON.parse(localStorage.getItem('sodium_admin_user') || 'null');
   if (!adminUser) {
     window.location.href = 'login.html';
     return;
   }
   
-  const adminData = JSON.parse(adminUser);
-  
   // Update admin avatar
   const adminAvatar = document.getElementById('adminAvatar');
-  const adminName = adminData.name.split(' ').map(n => n[0]).join('').toUpperCase();
-  adminAvatar.textContent = adminName;
-  
-  // Wait for Firebase to load
-  await new Promise(resolve => {
-    const checkFirebase = setInterval(() => {
-      if (window.firebaseAdmin) {
-        clearInterval(checkFirebase);
-        resolve();
-      }
-    }, 100);
-  });
-  
-  const { db, collection, getDocs } = window.firebaseAdmin;
+  adminAvatar.textContent = adminUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+  document.getElementById('welcomeMessage').innerHTML = `Welcome, ${adminUser.name}. Manage SODIUM from the master control panel.`;
   
   // Load dashboard data
-  loadDashboardData(adminData);
+  await loadDashboardData();
   
   // Setup event listeners
-  setupEventListeners(adminData);
+  setupEventListeners(adminUser);
+});
+
+async function loadDashboardData() {
+  try {
+    // Load users from localStorage (or Firebase)
+    const users = JSON.parse(localStorage.getItem('sodium_users') || '[]');
+    const applications = JSON.parse(localStorage.getItem('sodium_role_applications') || '[]');
+    
+    // Update stats
+    const totalUsers = users.length;
+    const adminUsers = users.filter(u => u.adminRole).length;
+    const pendingApps = applications.filter(a => a.status === 'pending').length;
+    
+    document.getElementById('totalUsers').textContent = totalUsers;
+    document.getElementById('adminUsersCount').textContent = adminUsers;
+    document.getElementById('adminUsersCount2').textContent = `${adminUsers} Admin Users`;
+    document.getElementById('pendingApplications').textContent = pendingApps;
+    
+    // Load current admins
+    loadCurrentAdmins(users);
+    
+    // Load recent applications
+    loadRecentApplications(applications);
+    
+    // Hide loading, show content
+    document.getElementById('loadingContainer').style.display = 'none';
+    document.getElementById('dashboardContent').style.display = 'block';
+    
+  } catch (error) {
+    console.error('Error loading dashboard:', error);
+  }
+}
+
+function loadCurrentAdmins(users) {
+  const admins = users.filter(user => user.adminRole);
+  const currentAdminsList = document.getElementById('currentAdminsList');
   
-  async function loadDashboardData(adminData) {
+  if (admins.length === 0) {
+    currentAdminsList.innerHTML = `
+      <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.03); border-radius: 12px;">
+        <i class="fas fa-user-shield" style="font-size: 36px; color: #aaa; margin-bottom: 15px;"></i>
+        <p style="color: #aaa;">No admin users assigned yet</p>
+      </div>
+    `;
+    return;
+  }
+  
+  currentAdminsList.innerHTML = '';
+  admins.forEach(admin => {
+    const initials = admin.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    const roleColors = {
+      'CEO': 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+      'Operations Head': 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+      'Technical Lead': 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+      'Strategic Director': 'linear-gradient(135deg, #10b981, #059669)',
+      'Community Guidance Director': 'linear-gradient(135deg, #ec4899, #db2777)',
+      'Media Manager': 'linear-gradient(135deg, #f59e0b, #d97706)'
+    };
+    
+    const adminCard = document.createElement('div');
+    adminCard.style.cssText = `
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: all 0.3s;
+    `;
+    
+    adminCard.innerHTML = `
+      <div style="width: 45px; height: 45px; background: ${roleColors[admin.adminRole] || 'linear-gradient(135deg, var(--gold), #f59e0b)'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+        ${initials}
+      </div>
+      <div style="flex: 1;">
+        <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">${admin.name}</div>
+        <div style="color: #aaa; font-size: 12px; margin-bottom: 6px;">${admin.email}</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="background: rgba(251, 191, 36, 0.2); color: var(--gold); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">
+            ${admin.adminRole}
+          </span>
+          <span style="color: #666; font-size: 11px;">
+            <i class="fas fa-calendar"></i> ${admin.roleAssignedAt ? new Date(admin.roleAssignedAt).toLocaleDateString() : 'Recently'}
+          </span>
+        </div>
+      </div>
+      <button class="admin-btn" onclick="removeAdminRole('${admin.uid}')" style="padding: 8px 16px; background: rgba(239,68,68,0.1); color: #f87171; border: none; border-radius: 8px; font-size: 12px;">
+        <i class="fas fa-times"></i> Remove
+      </button>
+    `;
+    
+    currentAdminsList.appendChild(adminCard);
+  });
+}
+
+function loadRecentApplications(applications) {
+  const recentApps = applications
+    .filter(app => app.status === 'pending')
+    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
+    .slice(0, 5);
+  
+  const container = document.getElementById('recentApplications');
+  
+  if (recentApps.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.03); border-radius: 12px;">
+        <i class="fas fa-inbox" style="font-size: 36px; color: #aaa; margin-bottom: 15px;"></i>
+        <p style="color: #aaa;">No pending role applications</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = '';
+  recentApps.forEach(app => {
+    const appDate = new Date(app.submittedAt).toLocaleDateString();
+    const appItem = document.createElement('div');
+    appItem.style.cssText = `
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+    `;
+    
+    appItem.innerHTML = `
+      <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--gold), #f59e0b); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-file-alt"></i>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">${app.name}</div>
+        <div style="color: #aaa; font-size: 12px;">Applied for: ${app.role}</div>
+      </div>
+      <span style="background: rgba(245,158,11,0.2); color: #f59e0b; padding: 4px 8px; border-radius: 12px; font-size: 11px;">${appDate}</span>
+    `;
+    
+    appItem.onclick = () => window.location.href = 'admin.html';
+    container.appendChild(appItem);
+  });
+}
+
+function setupEventListeners(adminUser) {
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
     try {
-      // Load users from Firestore
-      const usersSnapshot = await getDocs(collection(db, 'users'));
-      const users = [];
-      usersSnapshot.forEach(doc => {
-        users.push({ id: doc.id, ...doc.data() });
-      });
-      
-      // Hide loading, show content
-      document.getElementById('loadingContainer').style.display = 'none';
-      document.getElementById('dashboardContent').style.display = 'block';
-      
-      // Update stats
-      updateStats(users);
-      
-      // Populate users table
-      populateUsersTable(users);
-      
-      // Populate activity list
-      populateActivityList(users);
-      
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
-      document.getElementById('loadingContainer').innerHTML = `
-        <div style="text-align: center;">
-          <div style="color: #f87171; font-size: 48px; margin-bottom: 20px;">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
-          <h3 style="color: #fff; margin-bottom: 10px;">Error Loading Data</h3>
-          <p style="color: #aaa;">${error.message}</p>
-          <button class="admin-btn" onclick="location.reload()" style="margin-top: 20px;">
-            <i class="fas fa-redo"></i> Retry
-          </button>
-        </div>
-      `;
-    }
-  }
-  
-  function updateStats(users) {
-    // Total users
-    document.getElementById('totalUsers').textContent = users.length;
-    
-    // Online users (simulated)
-    const onlineCount = Math.floor(users.length * 0.3); // 30% online
-    document.getElementById('onlineUsers').textContent = `${onlineCount} Online`;
-    
-    // Active events
-    document.getElementById('activeEvents').textContent = '3';
-    
-    // Engagement rate
-    document.getElementById('engagementRate').textContent = '78%';
-    
-    // System health
-    document.getElementById('systemHealth').textContent = '100%';
-    
-    // Department stats
-    document.getElementById('itMembers').textContent = Math.floor(users.length * 0.4);
-    document.getElementById('mediaMembers').textContent = Math.floor(users.length * 0.3);
-    document.getElementById('gamingMembers').textContent = Math.floor(users.length * 0.3);
-  }
-  
-  function populateUsersTable(users) {
-    const tableBody = document.getElementById('usersTableBody');
-    tableBody.innerHTML = '';
-    
-    // Sort users by join date (newest first)
-    users.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
-    // Show first 10 users
-    users.slice(0, 10).forEach(user => {
-      const row = document.createElement('tr');
-      
-      // Format join date
-      const joinDate = new Date(user.createdAt).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-      
-      row.innerHTML = `
-        <td>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--purple), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;">
-              ${user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-            </div>
-            <div>
-              <div style="font-weight: 600; color: #fff;">${user.name}</div>
-              <div style="font-size: 12px; color: #aaa;">@${user.username}</div>
-            </div>
-          </div>
-        </td>
-        <td>${user.email}</td>
-        <td><span class="user-role ${user.role === 'admin' ? 'role-admin' : 'role-member'}">${user.role}</span></td>
-        <td><span class="user-status status-active">Active</span></td>
-        <td>${joinDate}</td>
-        <td>
-          <div class="user-actions">
-            <div class="action-icon view" title="View Profile">
-              <i class="fas fa-eye"></i>
-            </div>
-            <div class="action-icon edit" title="Edit User">
-              <i class="fas fa-edit"></i>
-            </div>
-            <div class="action-icon delete" title="Delete User">
-              <i class="fas fa-trash"></i>
-            </div>
-          </div>
-        </td>
-      `;
-      
-      tableBody.appendChild(row);
-    });
-  }
-  
-  function populateActivityList(users) {
-    const activityList = document.getElementById('activityList');
-    activityList.innerHTML = '';
-    
-    // Generate recent activity
-    const activities = [
-      { icon: 'fa-user-plus', title: 'New User Registered', user: users[0]?.name || 'John Doe', time: '5 minutes ago' },
-      { icon: 'fa-calendar-check', title: 'Event Registration', user: users[1]?.name || 'Jane Smith', time: '1 hour ago' },
-      { icon: 'fa-comment', title: 'Forum Post Created', user: users[2]?.name || 'Bob Johnson', time: '2 hours ago' },
-      { icon: 'fa-trophy', title: 'Achievement Unlocked', user: users[3]?.name || 'Alice Brown', time: '5 hours ago' },
-      { icon: 'fa-project-diagram', title: 'Project Submitted', user: users[4]?.name || 'Charlie Wilson', time: '1 day ago' }
-    ];
-    
-    activities.forEach(activity => {
-      const activityItem = document.createElement('li');
-      activityItem.className = 'activity-item';
-      activityItem.innerHTML = `
-        <div class="activity-icon">
-          <i class="fas ${activity.icon}"></i>
-        </div>
-        <div class="activity-details">
-          <div class="activity-title">${activity.title}</div>
-          <div class="activity-time">${activity.time}</div>
-          <div class="activity-user">by ${activity.user}</div>
-        </div>
-      `;
-      activityList.appendChild(activityItem);
-    });
-  }
-  
-  function setupEventListeners(adminData) {
-    // Logout functionality
-    document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('sodium_admin_user');
       window.location.href = 'login.html';
-    });
-    
-    // Add User button
-    document.getElementById('addUserBtn').addEventListener('click', () => {
-      document.getElementById('addUserModal').style.display = 'flex';
-    });
-    
-    // Close modal buttons
-    document.getElementById('closeAddUserModal').addEventListener('click', () => {
-      document.getElementById('addUserModal').style.display = 'none';
-    });
-    
-    // Close modal when clicking outside
-    document.getElementById('addUserModal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('addUserModal')) {
-        document.getElementById('addUserModal').style.display = 'none';
-      }
-    });
-    
-    // Create Event button
-    document.getElementById('createEventBtn').addEventListener('click', () => {
-      alert('Event creation feature coming soon!');
-    });
-    
-    // Export Data button
-    document.getElementById('exportDataBtn').addEventListener('click', () => {
-      exportData();
-    });
-    
-    // Add User form submission
-    document.getElementById('addUserForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const name = document.getElementById('newUserName').value.trim();
-      const email = document.getElementById('newUserEmail').value.trim();
-      const role = document.getElementById('newUserRole').value;
-      const department = document.getElementById('newUserDepartment').value;
-      
-      if (!name || !email) {
-        showModalMessage('Please fill in all required fields', 'error');
-        return;
-      }
-      
-      // Show success message (in real app, you would save to Firebase)
-      showModalMessage(`User "${name}" added successfully! (Demo mode)`, 'success');
-      
-      // Reset form
-      document.getElementById('addUserForm').reset();
-      
-      // Close modal after 2 seconds
-      setTimeout(() => {
-        document.getElementById('addUserModal').style.display = 'none';
-        // Refresh user list
-        location.reload();
-      }, 2000);
-    });
-  }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  });
   
-  function showModalMessage(message, type) {
-    const modalMessage = document.getElementById('modalMessage');
-    modalMessage.textContent = message;
-    modalMessage.className = `message ${type}`;
-    modalMessage.style.display = 'block';
-    
-    setTimeout(() => {
-      modalMessage.style.display = 'none';
-    }, 5000);
-  }
+  // Go to role applications
+  document.getElementById('goToRoleApplications').addEventListener('click', () => {
+    window.location.href = 'admin.html';
+  });
   
-  function exportData() {
-    // In a real app, you would fetch data from Firebase and create a CSV/JSON
+  // Export data
+  document.getElementById('exportDataBtn').addEventListener('click', () => {
+    const users = JSON.parse(localStorage.getItem('sodium_users') || '[]');
     const data = {
-      exportedBy: adminData.name,
+      exportedBy: adminUser.name,
       exportedAt: new Date().toISOString(),
-      message: 'Data export feature will be implemented with Firebase integration'
+      totalUsers: users.length,
+      adminUsers: users.filter(u => u.adminRole).length,
+      users: users.map(u => ({
+        name: u.name,
+        email: u.email,
+        role: u.adminRole || 'Member',
+        joined: u.createdAt
+      }))
     };
     
     const dataStr = JSON.stringify(data, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    const link = document.createElement('a');
+    link.href = dataUri;
+    link.download = `sodium_export_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+  });
+  
+  // Admin role assignment setup
+  setupAdminRoleAssignment();
+}
+
+function setupAdminRoleAssignment() {
+  const searchBtn = document.getElementById('searchUserBtn');
+  const searchInput = document.getElementById('searchUser');
+  const resultsDiv = document.getElementById('userSearchResults');
+  const assignBtn = document.getElementById('assignAdminRoleBtn');
+  
+  let selectedUser = null;
+  let selectedRole = null;
+  
+  // Search user
+  searchBtn.addEventListener('click', () => {
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    if (!searchTerm) {
+      showMessage('Please enter a name or email to search', 'error');
+      return;
+    }
     
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', `sodium_export_${new Date().toISOString().split('T')[0]}.json`);
-    linkElement.click();
+    const users = JSON.parse(localStorage.getItem('sodium_users') || '[]');
+    const foundUser = users.find(u => 
+      u.name.toLowerCase().includes(searchTerm) || 
+      u.email.toLowerCase().includes(searchTerm)
+    );
     
-    alert('Export initiated! In a full implementation, this would download all user data.');
+    if (foundUser) {
+      selectedUser = foundUser;
+      const initials = foundUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+      
+      document.getElementById('selectedUserInfo').innerHTML = `
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--gold), #f59e0b); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px;">
+            ${initials}
+          </div>
+          <div>
+            <div style="font-weight: 600; color: #fff; font-size: 18px; margin-bottom: 5px;">${foundUser.name}</div>
+            <div style="color: #aaa; font-size: 14px; margin-bottom: 5px;">${foundUser.email}</div>
+            <div style="color: #ccc; font-size: 13px;">
+              <span style="color: var(--gold);">Current Role:</span> ${foundUser.adminRole || 'Member'}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      resultsDiv.style.display = 'block';
+      showMessage('', 'success'); // Clear message
+      
+    } else {
+      showMessage('No user found with that name or email', 'error');
+    }
+  });
+  
+  // Role selection
+  document.querySelectorAll('.admin-role-option').forEach(option => {
+    option.addEventListener('click', function() {
+      // Remove selection from all
+      document.querySelectorAll('.admin-role-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      
+      // Add selection to this
+      this.classList.add('selected');
+      selectedRole = this.getAttribute('data-role');
+    });
+  });
+  
+  // Assign role
+  assignBtn.addEventListener('click', () => {
+    if (!selectedUser) {
+      showMessage('Please search and select a user first', 'error');
+      return;
+    }
+    
+    if (!selectedRole) {
+      showMessage('Please select an admin role to assign', 'error');
+      return;
+    }
+    
+    if (confirm(`Assign ${selectedRole} role to ${selectedUser.name}?`)) {
+      // Get permissions
+      const permissions = {
+        dashboard: document.getElementById('permissionDashboard').checked,
+        users: document.getElementById('permissionUsers').checked,
+        roles: document.getElementById('permissionRoles').checked,
+        content: document.getElementById('permissionContent').checked
+      };
+      
+      // Update user in localStorage
+      const users = JSON.parse(localStorage.getItem('sodium_users') || '[]');
+      const userIndex = users.findIndex(u => u.uid === selectedUser.uid);
+      
+      if (userIndex !== -1) {
+        users[userIndex].adminRole = selectedRole;
+        users[userIndex].adminPermissions = permissions;
+        users[userIndex].roleAssignedBy = JSON.parse(localStorage.getItem('sodium_admin_user')).name;
+        users[userIndex].roleAssignedAt = new Date().toISOString();
+        
+        localStorage.setItem('sodium_users', JSON.stringify(users));
+        
+        // Update user's individual storage
+        localStorage.setItem(`sodium_user_data_${selectedUser.uid}`, JSON.stringify(users[userIndex]));
+        
+        // Refresh UI
+        showMessage(`✓ ${selectedRole} role assigned to ${selectedUser.name}`, 'success');
+        loadCurrentAdmins(users);
+        
+        // Reset form
+        searchInput.value = '';
+        resultsDiv.style.display = 'none';
+        selectedUser = null;
+        selectedRole = null;
+        document.querySelectorAll('.admin-role-option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+      }
+    }
+  });
+}
+
+function showMessage(message, type) {
+  const messageDiv = document.getElementById('assignRoleMessage');
+  messageDiv.textContent = message;
+  messageDiv.className = `message ${type}`;
+  messageDiv.style.display = 'block';
+  
+  if (message) {
+    setTimeout(() => {
+      messageDiv.style.display = 'none';
+    }, 5000);
   }
-});
+}
+
+// Remove admin role function
+window.removeAdminRole = function(userId) {
+  if (confirm('Are you sure you want to remove this admin role?')) {
+    const users = JSON.parse(localStorage.getItem('sodium_users') || '[]');
+    const userIndex = users.findIndex(u => u.uid === userId);
+    
+    if (userIndex !== -1) {
+      const userName = users[userIndex].name;
+      users[userIndex].adminRole = null;
+      users[userIndex].adminPermissions = null;
+      
+      localStorage.setItem('sodium_users', JSON.stringify(users));
+      localStorage.removeItem(`sodium_user_data_${userId}`);
+      
+      loadCurrentAdmins(users);
+      showMessage(`✓ Admin role removed from ${userName}`, 'success');
+    }
+  }
+};
 </script>
 </body>
 </html>
