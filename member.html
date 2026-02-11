@@ -6,150 +6,6 @@
 <title>SODIUM • Member Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Add Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { 
-    getAuth, 
-    onAuthStateChanged,
-    signOut 
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { 
-    getFirestore, 
-    doc, 
-    getDoc 
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  
-  const firebaseConfig = {
-    apiKey: "AIzaSyAUVsLH-YZdbhnH5U8tuS-31bTrPz6CZ8g",
-    authDomain: "sodium-b5392.firebaseapp.com",
-    projectId: "sodium-b5392",
-    storageBucket: "sodium-b5392.firebasestorage.app",
-    messagingSenderId: "21034072519",
-    appId: "1:21034072519:web:258c82eb4cfed599c301e2",
-    measurementId: "G-E0F44QQMD0"
-  };
-
-  // Check if user has admin role
-function checkAdminRole(userData) {
-  const adminAccessSection = document.getElementById('adminAccessSection');
-  const adminRoleBadge = document.getElementById('adminRoleBadge');
-  const adminPendingBadge = document.getElementById('adminPendingBadge');
-  
-  if (userData.adminRole) {
-    // Show admin access section
-    adminAccessSection.style.display = 'block';
-    
-    // Update admin role badge
-    adminRoleBadge.textContent = userData.adminRole;
-    
-    // Set role color
-    const roleColors = {
-      'CEO': '#fbbf24',
-      'Operations Head': '#3b82f6',
-      'Technical Lead': '#8b5cf6',
-      'Strategic Director': '#10b981',
-      'Community Guidance Director': '#ec4899',
-      'Media Manager': '#f59e0b'
-    };
-    
-    if (roleColors[userData.adminRole]) {
-      adminRoleBadge.style.background = `linear-gradient(135deg, ${roleColors[userData.adminRole]}, ${roleColors[userData.adminRole]}99)`;
-    }
-    
-    // Setup admin dashboard link
-    document.getElementById('menuAdminDashboard').addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.href = 'admin-dashboard-template.html';
-    });
-    
-    // Setup role management link
-    document.getElementById('menuRoleManagement').addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.href = 'admin.html';
-    });
-    
-    // Update pending applications count
-    updatePendingApplicationsBadge();
-  }
-}
-
-function updatePendingApplicationsBadge() {
-  const applications = JSON.parse(localStorage.getItem('sodium_role_applications') || '[]');
-  const pendingCount = applications.filter(a => a.status === 'pending').length;
-  const badge = document.getElementById('adminPendingBadge');
-  
-  if (pendingCount > 0) {
-    badge.textContent = pendingCount;
-    badge.style.display = 'inline-block';
-  } else {
-    badge.style.display = 'none';
-  }
-}
-
-  // Check if user has admin role
-function checkAdminRole(userData) {
-  const adminAccessSection = document.getElementById('adminAccessSection');
-  const adminRoleBadge = document.getElementById('adminRoleBadge');
-  const adminPendingBadge = document.getElementById('adminPendingBadge');
-  
-  if (userData.adminRole) {
-    // Show admin access section
-    adminAccessSection.style.display = 'block';
-    
-    // Update admin role badge
-    adminRoleBadge.textContent = userData.adminRole;
-    
-    // Set role color
-    const roleColors = {
-      'CEO': '#fbbf24',
-      'Operations Head': '#3b82f6',
-      'Technical Lead': '#8b5cf6',
-      'Strategic Director': '#10b981',
-      'Community Guidance Director': '#ec4899',
-      'Media Manager': '#f59e0b'
-    };
-    
-    if (roleColors[userData.adminRole]) {
-      adminRoleBadge.style.background = `linear-gradient(135deg, ${roleColors[userData.adminRole]}, ${roleColors[userData.adminRole]}99)`;
-    }
-    
-    // Setup admin dashboard link
-    document.getElementById('menuAdminDashboard').addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.href = 'admin-dashboard-template.html';
-    });
-    
-    // Setup role management link
-    document.getElementById('menuRoleManagement').addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.href = 'admin.html';
-    });
-    
-    // Update pending applications count
-    updatePendingApplicationsBadge();
-  }
-}
-
-function updatePendingApplicationsBadge() {
-  const applications = JSON.parse(localStorage.getItem('sodium_role_applications') || '[]');
-  const pendingCount = applications.filter(a => a.status === 'pending').length;
-  const badge = document.getElementById('adminPendingBadge');
-  
-  if (pendingCount > 0) {
-    badge.textContent = pendingCount;
-    badge.style.display = 'inline-block';
-  } else {
-    badge.style.display = 'none';
-  }
-}
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  
-  window.firebaseAuth = { app, auth, db, onAuthStateChanged, signOut, doc, getDoc };
-</script>
 <style>
 :root {
   --bg-dark: #050505;
@@ -160,17 +16,43 @@ function updatePendingApplicationsBadge() {
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
+  --gold: #fbbf24;
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 html{scroll-behavior:smooth;}
 body{background: var(--bg-dark); color:#fff; overflow-x:hidden;}
 
 /* Animated Background Blobs */
-.blob {position:fixed; border-radius:50%; filter: blur(80px); z-index:-1;}
-.blob1{width:500px;height:500px; background:radial-gradient(circle,#a855f780,transparent); top:10%; left:10%; animation:move1 25s infinite alternate;}
-.blob2{width:600px;height:600px; background:radial-gradient(circle,#6366f180,transparent); bottom:0; right:5%; animation:move2 30s infinite alternate;}
-@keyframes move1{0%{transform:translate(0,0);}100%{transform:translate(50px,60px);}}
-@keyframes move2{0%{transform:translate(0,0);}100%{transform:translate(-70px,-40px);}}
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: -1;
+}
+.blob1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #a855f780, transparent);
+  top: 10%;
+  left: 10%;
+  animation: move1 25s infinite alternate;
+}
+.blob2 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #6366f180, transparent);
+  bottom: 0;
+  right: 5%;
+  animation: move2 30s infinite alternate;
+}
+@keyframes move1 {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 60px); }
+}
+@keyframes move2 {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-70px, -40px); }
+}
 
 /* Header */
 header {
@@ -182,9 +64,9 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 15px 60px;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo {
@@ -194,21 +76,21 @@ header {
 }
 
 .logo-icon {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   background: linear-gradient(135deg, var(--purple), var(--blue));
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .logo-text {
   font-weight: 700;
   color: #fff;
-  font-size: 22px;
+  font-size: 24px;
   letter-spacing: 2px;
 }
 
@@ -219,7 +101,7 @@ header {
 .user-menu {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 25px;
 }
 
 .menu-toggle {
@@ -228,42 +110,73 @@ header {
   color: #fff;
   font-size: 24px;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 10px;
   transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .menu-toggle:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   background: linear-gradient(135deg, var(--purple), var(--blue));
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 18px;
   color: white;
   cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+  border-color: var(--purple);
 }
 
 /* Sidebar Menu */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 1999;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
 .sidebar {
   position: fixed;
   top: 0;
   right: -400px;
-  width: 350px;
+  width: 380px;
   height: 100vh;
-  background: var(--bg-dark);
-  border-left: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(15px);
+  background: rgba(10, 10, 15, 0.95);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 2000;
-  transition: right 0.3s ease;
+  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-y: auto;
-  box-shadow: -5px 0 30px rgba(0,0,0,0.5);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .sidebar.active {
@@ -272,42 +185,133 @@ header {
 
 .sidebar-header {
   padding: 30px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .sidebar-header h3 {
-  font-size: 20px;
+  font-size: 22px;
   color: #fff;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+}
+
+.sidebar-header h3 i {
+  color: var(--purple);
 }
 
 .close-sidebar {
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  color: #aaa;
-  font-size: 24px;
+  color: #fff;
+  font-size: 20px;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 5px;
-  transition: color 0.3s;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: all 0.3s;
 }
 
 .close-sidebar:hover {
-  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
 }
 
 .sidebar-content {
-  padding: 0;
+  padding: 20px 0;
 }
 
+/* User Profile Card in Sidebar */
+.user-profile-card {
+  padding: 0 30px 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 15px;
+}
+
+.user-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.sidebar-avatar {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 28px;
+  color: white;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-user-info h4 {
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.sidebar-user-info p {
+  color: #aaa;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-user-info p i {
+  color: var(--purple);
+  font-size: 12px;
+}
+
+/* Role Status Card */
+.role-status-card {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(99, 102, 241, 0.1));
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 0 30px 25px;
+}
+
+.role-status-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.role-status-header i {
+  font-size: 24px;
+  color: var(--purple);
+}
+
+.role-status-header h5 {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.current-role-badge {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-block;
+  margin-top: 10px;
+  color: white;
+}
+
+/* Menu Sections */
 .menu-section {
   padding: 20px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .menu-section:last-child {
@@ -319,40 +323,46 @@ header {
   color: #aaa;
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  font-weight: 600;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 15px 30px;
+  padding: 14px 30px;
   color: #fff;
   text-decoration: none;
   transition: all 0.3s;
   cursor: pointer;
+  position: relative;
 }
 
 .menu-item:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   padding-left: 35px;
 }
 
 .menu-item i {
-  width: 20px;
+  width: 22px;
+  font-size: 18px;
   color: var(--purple);
 }
 
 .menu-item span {
   flex: 1;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .menu-item .badge {
   background: linear-gradient(135deg, var(--purple), var(--blue));
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 5px 10px;
+  border-radius: 20px;
   font-size: 11px;
   font-weight: 600;
+  color: white;
 }
 
 .menu-item.danger {
@@ -363,40 +373,7 @@ header {
   color: #f87171;
 }
 
-/* Role Status */
-.role-status {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 10px;
-  padding: 15px;
-  margin: 20px 30px;
-}
-
-.role-status h5 {
-  color: #60a5fa;
-  font-size: 14px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.role-status p {
-  color: #ccc;
-  font-size: 13px;
-  margin-bottom: 10px;
-}
-
-.role-status .current-role {
-  background: linear-gradient(135deg, var(--purple), var(--blue));
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-}
-
-/* Member Dashboard */
+/* Dashboard Main Content */
 .dashboard {
   padding: 150px 60px 60px;
   max-width: 1400px;
@@ -407,11 +384,12 @@ header {
 .welcome-banner {
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(99, 102, 241, 0.1));
   border: 1px solid rgba(168, 85, 247, 0.2);
-  border-radius: 24px;
-  padding: 40px;
-  margin-bottom: 40px;
+  border-radius: 30px;
+  padding: 50px;
+  margin-bottom: 50px;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .welcome-banner::before {
@@ -431,8 +409,8 @@ header {
 }
 
 .welcome-content h1 {
-  font-size: 36px;
-  margin-bottom: 10px;
+  font-size: 42px;
+  margin-bottom: 15px;
   background: linear-gradient(135deg, var(--purple), var(--blue));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -441,37 +419,47 @@ header {
 
 .welcome-content p {
   color: #ccc;
-  font-size: 16px;
-  max-width: 600px;
-  margin-bottom: 30px;
+  font-size: 18px;
+  max-width: 700px;
+  margin-bottom: 35px;
+  line-height: 1.6;
 }
 
+/* User Stats */
 .user-stats {
   display: flex;
-  gap: 30px;
-  margin-bottom: 30px;
+  gap: 25px;
+  margin-bottom: 35px;
   flex-wrap: wrap;
 }
 
 .stat-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 20px;
-  min-width: 180px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 25px;
+  min-width: 200px;
   text-align: center;
-  transition: transform 0.3s;
+  transition: all 0.3s;
+  flex: 1;
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
   border-color: var(--purple);
+  box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+}
+
+.stat-card .icon {
+  font-size: 28px;
+  margin-bottom: 15px;
+  color: var(--purple);
 }
 
 .stat-value {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   color: #fff;
 }
 
@@ -479,51 +467,45 @@ header {
   font-size: 14px;
   color: #aaa;
   text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.stat-card .icon {
-  font-size: 24px;
-  margin-bottom: 15px;
-  color: var(--purple);
+  letter-spacing: 1.5px;
 }
 
 /* Quick Actions */
 .quick-actions {
   display: flex;
   gap: 15px;
-  margin-top: 20px;
+  margin-top: 25px;
   flex-wrap: wrap;
 }
 
 .action-btn {
-  padding: 12px 24px;
+  padding: 14px 28px;
   background: linear-gradient(135deg, var(--purple), var(--blue));
   color: #fff;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.3s;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .action-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(168, 85, 247, 0.4);
 }
 
 .action-btn.secondary {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ccc;
 }
 
 .action-btn.secondary:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-color: var(--purple);
   color: #fff;
 }
@@ -531,18 +513,18 @@ header {
 /* Dashboard Grid */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
-  margin-top: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 35px;
+  margin-top: 50px;
 }
 
 .dashboard-card {
   background: var(--glass);
   backdrop-filter: blur(15px);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 30px;
-  transition: all 0.3s;
+  border-radius: 24px;
+  padding: 35px;
+  transition: all 0.4s;
   position: relative;
   overflow: hidden;
 }
@@ -552,15 +534,20 @@ header {
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 5px;
   height: 100%;
   background: linear-gradient(135deg, var(--purple), var(--blue));
+  transition: width 0.3s;
 }
 
 .dashboard-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
-  border-color: rgba(168, 85, 247, 0.3);
+  box-shadow: 0 25px 45px rgba(168, 85, 247, 0.25);
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+.dashboard-card:hover::before {
+  width: 8px;
 }
 
 .card-header {
@@ -571,19 +558,140 @@ header {
 }
 
 .card-header h3 {
-  font-size: 20px;
+  font-size: 22px;
   color: #fff;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .card-header .badge {
   background: linear-gradient(135deg, var(--purple), var(--blue));
-  padding: 4px 12px;
-  border-radius: 20px;
+  padding: 6px 14px;
+  border-radius: 25px;
   font-size: 12px;
   font-weight: 600;
+  color: white;
+}
+
+/* Events List */
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.event-item {
+  display: flex;
+  align-items: center;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  transition: all 0.3s;
+}
+
+.event-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateX(8px);
+}
+
+.event-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+  font-size: 20px;
+}
+
+.event-details {
+  flex: 1;
+}
+
+.event-title {
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.event-meta {
+  font-size: 13px;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.event-meta i {
+  color: var(--purple);
+  font-size: 12px;
+}
+
+/* Role Benefits List */
+.role-benefits {
+  list-style: none;
+  margin-top: 20px;
+}
+
+.role-benefits li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #ccc;
+  font-size: 15px;
+}
+
+.role-benefits li i {
+  color: var(--success);
+  font-size: 14px;
+}
+
+/* Activity List */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+}
+
+.activity-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(168, 85, 247, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--purple);
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-text {
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.activity-time {
+  color: #aaa;
+  font-size: 12px;
 }
 
 /* Loading State */
@@ -592,115 +700,70 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 70vh;
+  height: 80vh;
 }
 
 .loading-spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid rgba(255,255,255,0.1);
+  width: 70px;
+  height: 70px;
+  border: 5px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   border-top-color: var(--purple);
   animation: spin 1s linear infinite;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Admin Access Section */
+.admin-access-section {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1));
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 16px;
+  margin: 0 30px 25px;
+  padding: 20px;
 }
 
-.dashboard-card {
-  animation: fadeInUp 0.6s ease forwards;
+.admin-badge-custom {
+  background: linear-gradient(135deg, var(--gold), #f59e0b);
+  color: #000;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 1024px) {
-  .dashboard {
-    padding: 140px 40px 40px;
-  }
-  
-  .dashboard-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  }
+  header { padding: 15px 40px; }
+  .dashboard { padding: 140px 40px 40px; }
+  .welcome-banner { padding: 40px; }
+  .dashboard-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 }
 
 @media (max-width: 768px) {
-  header {
-    padding: 15px 25px;
-  }
-  
-  .dashboard {
-    padding: 130px 25px 40px;
-  }
-  
-  .welcome-banner {
-    padding: 30px 25px;
-  }
-  
-  .user-stats {
-    gap: 15px;
-  }
-  
-  .stat-card {
-    min-width: 140px;
-    padding: 15px;
-  }
-  
-  .quick-actions {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    right: -100%;
-  }
-  
-  .sidebar.active {
-    right: 0;
-  }
+  header { padding: 15px 25px; }
+  .logo-text { font-size: 20px; }
+  .dashboard { padding: 130px 25px 40px; }
+  .welcome-banner { padding: 30px; }
+  .welcome-content h1 { font-size: 32px; }
+  .user-stats { gap: 15px; }
+  .stat-card { min-width: 150px; padding: 20px; }
+  .sidebar { width: 100%; right: -100%; }
 }
 
 @media (max-width: 576px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .user-stats {
-    justify-content: center;
-  }
-  
-  .stat-card {
-    min-width: 120px;
-  }
-}
-
-/* Overlay for sidebar */
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(5px);
-  z-index: 1999;
-  display: none;
-}
-
-.sidebar-overlay.active {
-  display: block;
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .stat-card { min-width: 100%; }
+  .quick-actions { flex-direction: column; }
+  .quick-actions .action-btn { width: 100%; }
+  .user-stats { flex-direction: column; }
+  .user-profile-header { flex-direction: column; text-align: center; }
 }
 </style>
 </head>
@@ -715,52 +778,75 @@ header {
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <h3><i class="fas fa-bars"></i> Menu</h3>
-    <button class="close-sidebar" id="closeSidebar">&times;</button>
+    <button class="close-sidebar" id="closeSidebar">
+      <i class="fas fa-times"></i>
+    </button>
   </div>
   
   <div class="sidebar-content">
     <!-- User Profile Section -->
-    <div class="menu-section">
-      <div style="padding: 0 30px 20px;">
-        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-          <div id="sidebarAvatar" style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--purple), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">
-            U
-          </div>
-          <div>
-            <div id="sidebarUserName" style="font-weight: 600; color: #fff; font-size: 16px;">Loading...</div>
-            <div id="sidebarUserEmail" style="color: #aaa; font-size: 13px;">Loading...</div>
-          </div>
+    <div class="user-profile-card">
+      <div class="user-profile-header">
+        <div class="sidebar-avatar" id="sidebarAvatar">U</div>
+        <div class="sidebar-user-info">
+          <h4 id="sidebarUserName">Loading...</h4>
+          <p><i class="fas fa-circle" style="color: var(--success); font-size: 10px;"></i> Active</p>
         </div>
       </div>
     </div>
     
-    <!-- Role Status -->
-    <div class="role-status" id="roleStatus">
-      <h5><i class="fas fa-user-tag"></i> Current Role</h5>
-      <p id="currentRoleDesc">You haven't selected a specific role yet. Apply for a role to get access to specialized features.</p>
-      <div id="currentRoleBadge" class="current-role">No Role Assigned</div>
+    <!-- Role Status Card -->
+    <div class="role-status-card" id="roleStatusCard">
+      <div class="role-status-header">
+        <i class="fas fa-user-tag"></i>
+        <h5>Current Role</h5>
+      </div>
+      <p id="currentRoleDesc" style="color: #ccc; font-size: 14px; margin-bottom: 12px;">No role assigned yet</p>
+      <span class="current-role-badge" id="currentRoleBadge">Member</span>
     </div>
     
-    <!-- Main Menu -->
+    <!-- Admin Access Section (Hidden by default) -->
+    <div id="adminAccessSection" style="display: none;">
+      <div class="menu-section">
+        <h4><i class="fas fa-shield-alt"></i> Admin Access</h4>
+        <div class="menu-item" id="menuAdminDashboard">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>My Admin Dashboard</span>
+          <span class="badge" id="adminRoleBadge">Admin</span>
+        </div>
+        <div class="menu-item" id="menuRoleManagement">
+          <i class="fas fa-user-check"></i>
+          <span>Role Applications</span>
+          <span class="badge" id="adminPendingBadge">0</span>
+        </div>
+        <div class="menu-item" id="menuMasterDashboard" style="display: none;">
+          <i class="fas fa-crown"></i>
+          <span>Master Admin Panel</span>
+          <span class="badge" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">Master</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Navigation -->
     <div class="menu-section">
       <h4>Navigation</h4>
-      <a href="#" class="menu-item" id="menuDashboard">
+      <div class="menu-item" id="menuDashboard">
         <i class="fas fa-tachometer-alt"></i>
         <span>Dashboard</span>
-      </a>
-      <a href="#" class="menu-item" id="menuProfile">
+      </div>
+      <div class="menu-item" id="menuProfile">
         <i class="fas fa-user-circle"></i>
         <span>My Profile</span>
-      </a>
-      <a href="#" class="menu-item" id="menuEvents">
+      </div>
+      <div class="menu-item" id="menuEvents">
         <i class="fas fa-calendar-alt"></i>
         <span>Events</span>
-        <span class="badge">3 New</span>
-      </a>
-      <a href="#" class="menu-item" id="menuProjects">
+        <span class="badge">3</span>
+      </div>
+      <div class="menu-item" id="menuProjects">
         <i class="fas fa-project-diagram"></i>
         <span>Projects</span>
-      </a>
+      </div>
     </div>
     
     <!-- Role & Department -->
@@ -771,27 +857,27 @@ header {
         <span>Apply for Role</span>
         <span class="badge">New</span>
       </div>
-      <a href="#" class="menu-item" id="menuDepartment">
+      <div class="menu-item" id="menuDepartment">
         <i class="fas fa-building"></i>
-        <span>My Department</span>
-      </a>
-      <a href="#" class="menu-item" id="menuAchievements">
+        <span>Departments</span>
+      </div>
+      <div class="menu-item" id="menuAchievements">
         <i class="fas fa-trophy"></i>
         <span>Achievements</span>
-      </a>
+      </div>
     </div>
     
     <!-- Account -->
     <div class="menu-section">
       <h4>Account</h4>
-      <a href="#" class="menu-item" id="menuSettings">
+      <div class="menu-item" id="menuSettings">
         <i class="fas fa-cog"></i>
         <span>Settings</span>
-      </a>
-      <a href="#" class="menu-item" id="menuHelp">
+      </div>
+      <div class="menu-item" id="menuHelp">
         <i class="fas fa-question-circle"></i>
         <span>Help & Support</span>
-      </a>
+      </div>
       <div class="menu-item danger" id="menuLogout">
         <i class="fas fa-sign-out-alt"></i>
         <span>Logout</span>
@@ -800,6 +886,7 @@ header {
   </div>
 </div>
 
+<!-- Header -->
 <header>
   <div class="logo">
     <div class="logo-icon">S</div>
@@ -814,20 +901,21 @@ header {
   </div>
 </header>
 
+<!-- Main Dashboard Content -->
 <main class="dashboard">
   <!-- Loading State -->
   <div class="loading-container" id="loadingContainer">
     <div class="loading-spinner"></div>
-    <p>Loading your SODIUM dashboard...</p>
+    <p style="color: #ccc; font-size: 16px;">Loading your SODIUM dashboard...</p>
   </div>
   
-  <!-- Content (hidden initially) -->
+  <!-- Dashboard Content (Hidden Initially) -->
   <div id="dashboardContent" style="display: none;">
     <!-- Welcome Banner -->
     <section class="welcome-banner">
       <div class="welcome-content">
-        <h1 id="welcomeTitle">Welcome Back!</h1>
-        <p id="welcomeMessage">Here's what's happening in your SODIUM community today.</p>
+        <h1 id="welcomeTitle">Welcome to SODIUM!</h1>
+        <p id="welcomeMessage">Access exclusive tech content, events, and community features. Your journey starts here.</p>
         
         <div class="user-stats">
           <div class="stat-card">
@@ -835,22 +923,19 @@ header {
             <div class="stat-value" id="eventsCount">3</div>
             <div class="stat-label">Upcoming Events</div>
           </div>
-          
           <div class="stat-card">
             <div class="icon"><i class="fas fa-trophy"></i></div>
             <div class="stat-value" id="achievementsCount">5</div>
             <div class="stat-label">Achievements</div>
           </div>
-          
           <div class="stat-card">
             <div class="icon"><i class="fas fa-users"></i></div>
             <div class="stat-value" id="connectionsCount">42</div>
             <div class="stat-label">Connections</div>
           </div>
-          
           <div class="stat-card">
             <div class="icon"><i class="fas fa-user-tag"></i></div>
-            <div class="stat-value" id="roleStatusBadge">Member</div>
+            <div class="stat-value" id="roleStatusValue">Member</div>
             <div class="stat-label">Current Role</div>
           </div>
         </div>
@@ -877,47 +962,64 @@ header {
           <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
           <a href="#" style="color: var(--blue); text-decoration: none; font-size: 14px;">View All</a>
         </div>
-        <div style="color: #ccc; font-size: 14px; margin-bottom: 20px;">Your upcoming activities</div>
-        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px;">
-          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--purple), var(--blue)); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+        <div class="events-list">
+          <div class="event-item">
+            <div class="event-icon">
               <i class="fas fa-code"></i>
             </div>
-            <div>
-              <div style="font-weight: 600; color: #fff;">Web Dev Workshop</div>
-              <div style="font-size: 13px; color: #aaa;">May 15 • 2:00 PM</div>
+            <div class="event-details">
+              <div class="event-title">Web Development Workshop</div>
+              <div class="event-meta">
+                <span><i class="fas fa-calendar"></i> May 15, 2024</span>
+                <span><i class="fas fa-clock"></i> 2:00 PM</span>
+              </div>
             </div>
           </div>
-          <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #fbbf24); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+          <div class="event-item">
+            <div class="event-icon">
               <i class="fas fa-gamepad"></i>
             </div>
-            <div>
-              <div style="font-weight: 600; color: #fff;">Gaming Tournament</div>
-              <div style="font-size: 13px; color: #aaa;">May 22 • 6:00 PM</div>
+            <div class="event-details">
+              <div class="event-title">Gaming Tournament</div>
+              <div class="event-meta">
+                <span><i class="fas fa-calendar"></i> May 22, 2024</span>
+                <span><i class="fas fa-clock"></i> 6:00 PM</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-icon">
+              <i class="fas fa-robot"></i>
+            </div>
+            <div class="event-details">
+              <div class="event-title">AI & Machine Learning Session</div>
+              <div class="event-meta">
+                <span><i class="fas fa-calendar"></i> May 28, 2024</span>
+                <span><i class="fas fa-clock"></i> 3:00 PM</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
       
       <!-- Role Information Card -->
-      <div class="dashboard-card">
+      <div class="dashboard-card" id="roleInfoCard">
         <div class="card-header">
           <h3><i class="fas fa-user-tag"></i> Role Information</h3>
-          <span class="badge" id="roleTypeBadge">Basic</span>
+          <span class="badge" id="roleTypeBadge">Basic Member</span>
         </div>
         <div id="roleInfoContent">
-          <p style="color: #aaa; margin-bottom: 20px;">You are currently a basic member. Apply for a specialized role to unlock more features and responsibilities.</p>
-          <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-              <i class="fas fa-info-circle" style="color: #60a5fa;"></i>
-              <div style="font-weight: 600; color: #60a5fa;">Benefits of Having a Role:</div>
+          <p style="color: #ccc; margin-bottom: 25px; line-height: 1.6;">You are currently a basic member. Apply for a specialized role to unlock more features and responsibilities in SODIUM.</p>
+          <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 16px; margin-bottom: 25px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+              <i class="fas fa-info-circle" style="color: #60a5fa; font-size: 18px;"></i>
+              <span style="font-weight: 600; color: #60a5fa;">Benefits of Having a Role:</span>
             </div>
-            <ul style="color: #ccc; font-size: 13px; padding-left: 20px;">
-              <li>Access to specialized projects</li>
-              <li>Priority event registration</li>
-              <li>Department-specific resources</li>
-              <li>Leadership opportunities</li>
+            <ul class="role-benefits">
+              <li><i class="fas fa-check-circle"></i> Access to specialized projects</li>
+              <li><i class="fas fa-check-circle"></i> Priority event registration</li>
+              <li><i class="fas fa-check-circle"></i> Department-specific resources</li>
+              <li><i class="fas fa-check-circle"></i> Leadership opportunities</li>
             </ul>
           </div>
           <button class="action-btn secondary" id="learnMoreRolesBtn" style="width: 100%;">
@@ -926,25 +1028,37 @@ header {
         </div>
       </div>
       
-      <!-- Recent Activity -->
+      <!-- Recent Activity Card -->
       <div class="dashboard-card">
         <div class="card-header">
           <h3><i class="fas fa-history"></i> Recent Activity</h3>
         </div>
-        <div style="color: #ccc; font-size: 14px; margin-bottom: 20px;">Your latest contributions</div>
-        <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px;">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-            <i class="fas fa-check-circle" style="color: var(--success);"></i>
-            <div style="flex: 1;">
-              <div style="font-size: 13px; color: #fff;">Completed Profile Setup</div>
-              <div style="font-size: 12px; color: #aaa;">2 hours ago</div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-text">Completed profile setup</div>
+              <div class="activity-time">2 hours ago</div>
             </div>
           </div>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-users" style="color: var(--blue);"></i>
-            <div style="flex: 1;">
-              <div style="font-size: 13px; color: #fff;">Joined SODIUM Community</div>
-              <div style="font-size: 12px; color: #aaa;">1 day ago</div>
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-text">Joined SODIUM community</div>
+              <div class="activity-time">1 day ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="fas fa-calendar-plus"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-text">Registered for Web Dev Workshop</div>
+              <div class="activity-time">2 days ago</div>
             </div>
           </div>
         </div>
@@ -954,258 +1068,476 @@ header {
 </main>
 
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-  // Wait for Firebase to load
-  await new Promise(resolve => {
-    const checkFirebase = setInterval(() => {
-      if (window.firebaseAuth) {
-        clearInterval(checkFirebase);
-        resolve();
-      }
-    }, 100);
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAUVsLH-YZdbhnH5U8tuS-31bTrPz6CZ8g",
+  authDomain: "sodium-b5392.firebaseapp.com",
+  projectId: "sodium-b5392",
+  storageBucket: "sodium-b5392.firebasestorage.app",
+  messagingSenderId: "21034072519",
+  appId: "1:21034072519:web:258c82eb4cfed599c301e2",
+  measurementId: "G-E0F44QQMD0"
+};
+
+// Initialize Firebase
+let auth, db, firebaseLoaded = false;
+
+// Load Firebase dynamically
+function loadFirebase() {
+  return new Promise((resolve, reject) => {
+    if (window.firebaseAuth) {
+      resolve(window.firebaseAuth);
+      return;
+    }
+    
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.innerHTML = `
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+      import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+      
+      const app = initializeApp(${JSON.stringify(firebaseConfig)});
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      
+      window.firebaseAuth = { app, auth, db, onAuthStateChanged, signOut, doc, getDoc };
+      window.dispatchEvent(new CustomEvent('firebase-loaded'));
+    `;
+    document.head.appendChild(script);
+    
+    window.addEventListener('firebase-loaded', () => resolve(window.firebaseAuth));
+    setTimeout(() => reject(new Error('Firebase timeout')), 5000);
   });
+}
+
+// Role colors mapping
+const roleColors = {
+  'CEO': { bg: '#fbbf24', text: '#000', icon: 'fa-crown' },
+  'Operations Head': { bg: '#3b82f6', text: '#fff', icon: 'fa-cogs' },
+  'Technical Lead': { bg: '#8b5cf6', text: '#fff', icon: 'fa-code' },
+  'Strategic Director': { bg: '#10b981', text: '#fff', icon: 'fa-chess-board' },
+  'Community Guidance Director': { bg: '#ec4899', text: '#fff', icon: 'fa-hands-helping' },
+  'Media Manager': { bg: '#f59e0b', text: '#000', icon: 'fa-photo-video' }
+};
+
+// Main initialization
+document.addEventListener('DOMContentLoaded', async () => {
+  // Show loading
+  document.getElementById('loadingContainer').style.display = 'flex';
+  document.getElementById('dashboardContent').style.display = 'none';
   
-  const { auth, db, onAuthStateChanged, signOut, doc, getDoc } = window.firebaseAuth;
+  // Check for admin session first
+  const adminSession = localStorage.getItem('sodium_admin_user');
+  if (adminSession) {
+    // Redirect admin to master dashboard
+    window.location.href = 'master-dashboard.html';
+    return;
+  }
   
   let userData = null;
   
-  // Check authentication state
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      try {
-        // Get user data from Firestore
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        
-        if (userDoc.exists()) {
-          userData = userDoc.data();
-          userData.uid = user.uid;
+  try {
+    // Try to load Firebase
+    const firebase = await loadFirebase();
+    auth = firebase.auth;
+    db = firebase.db;
+    firebaseLoaded = true;
+    
+    // Check authentication state
+    firebase.onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          // Get user data from Firestore
+          const userDoc = await firebase.getDoc(firebase.doc(db, 'users', user.uid));
           
-          // Hide loading, show content
-          document.getElementById('loadingContainer').style.display = 'none';
-          document.getElementById('dashboardContent').style.display = 'block';
+          if (userDoc.exists()) {
+            userData = userDoc.data();
+            userData.uid = user.uid;
+            localStorage.setItem('sodium_user_data', JSON.stringify(userData));
+          } else {
+            // Create basic user data
+            userData = {
+              uid: user.uid,
+              name: user.displayName || user.email.split('@')[0],
+              email: user.email,
+              username: user.email.split('@')[0],
+              role: 'member',
+              adminRole: null,
+              createdAt: new Date().toISOString()
+            };
+            localStorage.setItem('sodium_user_data', JSON.stringify(userData));
+          }
           
-          // Update user info
-          updateUserInfo(userData);
+          // Initialize dashboard
+          initializeDashboard(userData);
           
-          // Set up event listeners
-          setupEventListeners(userData);
-        } else {
-          console.error('User data not found');
-          redirectToLogin();
+        } catch (error) {
+          console.error('Firestore error:', error);
+          // Fallback to localStorage
+          loadFromLocalStorage();
         }
-      } catch (error) {
-        console.error('Error loading user data:', error);
-        // For demo purposes, create demo user data
-        userData = {
-          uid: 'demo_user',
-          name: 'Demo User',
-          email: user.email,
-          username: 'demo',
-          role: 'member',
-          currentRole: null,
-          roleStatus: 'none'
-        };
-        
-        document.getElementById('loadingContainer').style.display = 'none';
-        document.getElementById('dashboardContent').style.display = 'block';
-        updateUserInfo(userData);
-        setupEventListeners(userData);
-      }
-    } else {
-      redirectToLogin();
-    }
-  });
-  
-  function updateUserInfo(userData) {
-    // Update welcome message
-    document.getElementById('welcomeTitle').textContent = `Welcome back, ${userData.name}!`;
-    
-    // Update user avatar
-    const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase();
-    document.getElementById('userAvatar').textContent = initials;
-    document.getElementById('sidebarAvatar').textContent = initials;
-    document.getElementById('sidebarUserName').textContent = userData.name;
-    document.getElementById('sidebarUserEmail').textContent = userData.email;
-    
-    // Update role information
-    updateRoleInfo(userData);
-  }
-  
-  function updateRoleInfo(userData) {
-    const currentRole = userData.currentRole || 'No Role Assigned';
-    const roleStatus = userData.roleStatus || 'none';
-    
-    // Update role badges
-    document.getElementById('roleStatusBadge').textContent = currentRole;
-    document.getElementById('currentRoleBadge').textContent = currentRole;
-    
-    // Update role status description
-    let roleDesc = '';
-    let roleType = 'Basic';
-    
-    if (roleStatus === 'applied') {
-      roleDesc = 'Your role application is pending review by administrators.';
-      roleType = 'Pending Review';
-    } else if (roleStatus === 'approved') {
-      roleDesc = `You are assigned as: ${currentRole}. You have access to specialized features.`;
-      roleType = currentRole;
-    } else if (roleStatus === 'rejected') {
-      roleDesc = 'Your role application was not approved. You can apply again with more details.';
-      roleType = 'Application Rejected';
-    } else {
-      roleDesc = 'You haven\'t selected a specific role yet. Apply for a role to get access to specialized features.';
-      roleType = 'Basic Member';
-    }
-    
-    document.getElementById('currentRoleDesc').textContent = roleDesc;
-    document.getElementById('roleTypeBadge').textContent = roleType;
-    
-    // Update role info content
-    const roleInfoContent = document.getElementById('roleInfoContent');
-    if (roleStatus === 'approved') {
-      roleInfoContent.innerHTML = `
-        <div style="text-align: center; margin-bottom: 20px;">
-          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--purple), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 24px;">
-            <i class="fas fa-user-check"></i>
-          </div>
-          <h4 style="color: #fff; margin-bottom: 10px;">${currentRole}</h4>
-          <p style="color: #aaa; font-size: 14px;">You are an active ${currentRole} in SODIUM</p>
-        </div>
-        <div style="background: rgba(34, 197, 94, 0.1); padding: 15px; border-radius: 12px;">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-            <i class="fas fa-check-circle" style="color: #4ade80;"></i>
-            <div style="font-weight: 600; color: #4ade80;">Role Benefits Activated</div>
-          </div>
-          <ul style="color: #ccc; font-size: 13px; padding-left: 20px;">
-            <li>Access to specialized projects</li>
-            <li>Priority event registration</li>
-            <li>Department-specific resources</li>
-            <li>Leadership opportunities</li>
-          </ul>
-        </div>
-      `;
-    }
-  }
-  
-  function setupEventListeners(userData) {
-    // Sidebar toggle
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    const closeSidebar = document.getElementById('closeSidebar');
-    
-    menuToggle.addEventListener('click', () => {
-      sidebar.classList.add('active');
-      sidebarOverlay.classList.add('active');
-    });
-    
-    closeSidebar.addEventListener('click', () => {
-      sidebar.classList.remove('active');
-      sidebarOverlay.classList.remove('active');
-    });
-    
-    sidebarOverlay.addEventListener('click', () => {
-      sidebar.classList.remove('active');
-      sidebarOverlay.classList.remove('active');
-    });
-    
-    // Apply for Role buttons
-    const applyRoleBtn = document.getElementById('applyRoleBtn');
-    const menuGetRole = document.getElementById('menuGetRole');
-    const learnMoreRolesBtn = document.getElementById('learnMoreRolesBtn');
-    
-    const goToRolePage = () => {
-      window.location.href = 'role.html';
-    };
-    
-    applyRoleBtn.addEventListener('click', goToRolePage);
-    menuGetRole.addEventListener('click', goToRolePage);
-    learnMoreRolesBtn.addEventListener('click', goToRolePage);
-    
-    // Logout functionality
-    const logoutBtn = document.getElementById('menuLogout');
-    logoutBtn.addEventListener('click', async () => {
-      try {
-        await signOut(auth);
-        window.location.href = 'login.html';
-      } catch (error) {
-        console.error('Logout error:', error);
-        alert('Error logging out. Please try again.');
+      } else {
+        loadFromLocalStorage();
       }
     });
     
-    // Join Event button
-    document.getElementById('joinEventBtn').addEventListener('click', () => {
-      alert('Event joining feature coming soon!');
-    });
-    
-    // Explore button
-    document.getElementById('exploreBtn').addEventListener('click', () => {
-      window.location.href = 'index.html#departments';
-    });
-    
-    // Menu items
-    document.getElementById('menuDashboard').addEventListener('click', (e) => {
-      e.preventDefault();
-      sidebar.classList.remove('active');
-      sidebarOverlay.classList.remove('active');
-    });
-    
-    document.getElementById('menuProfile').addEventListener('click', (e) => {
-      e.preventDefault();
-      alert('Profile page coming soon!');
-      sidebar.classList.remove('active');
-      sidebarOverlay.classList.remove('active');
-    });
-    
-    document.getElementById('menuEvents').addEventListener('click', (e) => {
-      e.preventDefault();
-      alert('Events page coming soon!');
-      sidebar.classList.remove('active');
-      sidebarOverlay.classList.remove('active');
-    });
-    
-    // Check if user has pending role application
-    checkRoleApplication(userData);
+  } catch (error) {
+    console.warn('Firebase not available, using localStorage');
+    loadFromLocalStorage();
   }
   
-  function checkRoleApplication(userData) {
-    // Check localStorage for pending applications
-    const pendingApps = JSON.parse(localStorage.getItem('sodium_role_applications') || '[]');
-    const userApp = pendingApps.find(app => app.userId === userData.uid);
+  function loadFromLocalStorage() {
+    // Try to get user data from localStorage
+    const storedUser = localStorage.getItem('sodium_user_data');
     
-    if (userApp) {
-      // Update UI to show pending application
-      document.getElementById('currentRoleBadge').textContent = 'Pending Review';
-      document.getElementById('currentRoleDesc').textContent = `Your application for ${userApp.role} is under review.`;
-      document.getElementById('roleTypeBadge').textContent = 'Pending';
-      document.getElementById('roleStatusBadge').textContent = 'Pending';
-      
-      // Update role info content
-      document.getElementById('roleInfoContent').innerHTML = `
-        <div style="text-align: center; margin-bottom: 20px;">
-          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f59e0b, #fbbf24); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 24px;">
-            <i class="fas fa-clock"></i>
-          </div>
-          <h4 style="color: #fff; margin-bottom: 10px;">Application Pending</h4>
-          <p style="color: #aaa; font-size: 14px;">You applied for: ${userApp.role}</p>
-          <p style="color: #f59e0b; font-size: 13px; margin-top: 10px;">Status: Under Review</p>
-        </div>
-        <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 12px;">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-            <i class="fas fa-info-circle" style="color: #fbbf24;"></i>
-            <div style="font-weight: 600; color: #fbbf24;">Application Status</div>
-          </div>
-          <p style="color: #ccc; font-size: 13px;">Your application has been submitted and is waiting for admin approval. You'll receive a notification once it's reviewed.</p>
-        </div>
-      `;
+    if (storedUser) {
+      userData = JSON.parse(storedUser);
+      initializeDashboard(userData);
+    } else {
+      // Demo user for testing
+      userData = {
+        uid: 'demo_' + Date.now(),
+        name: 'Demo User',
+        email: 'demo@sodium.com',
+        username: 'demouser',
+        role: 'member',
+        adminRole: null,
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem('sodium_user_data', JSON.stringify(userData));
+      initializeDashboard(userData);
     }
-  }
-  
-  function redirectToLogin() {
-    window.location.href = 'login.html';
   }
 });
+
+function initializeDashboard(userData) {
+  // Hide loading, show content
+  document.getElementById('loadingContainer').style.display = 'none';
+  document.getElementById('dashboardContent').style.display = 'block';
+  
+  // Update user information
+  updateUserInfo(userData);
+  
+  // Check for admin role
+  checkAdminRole(userData);
+  
+  // Check for pending applications
+  checkPendingApplication(userData);
+  
+  // Setup event listeners
+  setupEventListeners(userData);
+  
+  // Update stats with random data (in real app, fetch from backend)
+  updateStats(userData);
+}
+
+function updateUserInfo(userData) {
+  // Get initials
+  const initials = userData.name.split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .substring(0, 2);
+  
+  // Update avatars
+  document.getElementById('userAvatar').textContent = initials;
+  document.getElementById('sidebarAvatar').textContent = initials;
+  
+  // Update sidebar user info
+  document.getElementById('sidebarUserName').textContent = userData.name;
+  
+  // Update welcome message
+  document.getElementById('welcomeTitle').textContent = `Welcome back, ${userData.name.split(' ')[0]}!`;
+  
+  // Update role badge
+  const currentRole = userData.adminRole || 'Member';
+  document.getElementById('currentRoleBadge').textContent = currentRole;
+  document.getElementById('roleStatusValue').textContent = currentRole;
+  document.getElementById('roleTypeBadge').textContent = currentRole;
+  
+  // If admin role, update badge color
+  if (userData.adminRole && roleColors[userData.adminRole]) {
+    const roleColor = roleColors[userData.adminRole].bg;
+    document.getElementById('currentRoleBadge').style.background = `linear-gradient(135deg, ${roleColor}, ${roleColor}99)`;
+    document.getElementById('currentRoleBadge').style.color = roleColors[userData.adminRole].text;
+  }
+}
+
+function checkAdminRole(userData) {
+  const adminAccessSection = document.getElementById('adminAccessSection');
+  const adminRoleBadge = document.getElementById('adminRoleBadge');
+  const adminPendingBadge = document.getElementById('adminPendingBadge');
+  const menuMasterDashboard = document.getElementById('menuMasterDashboard');
+  
+  if (userData.adminRole) {
+    // Show admin access section
+    adminAccessSection.style.display = 'block';
+    
+    // Update admin role badge
+    adminRoleBadge.textContent = userData.adminRole;
+    
+    // Set role color
+    if (roleColors[userData.adminRole]) {
+      const roleColor = roleColors[userData.adminRole].bg;
+      adminRoleBadge.style.background = `linear-gradient(135deg, ${roleColor}, ${roleColor}99)`;
+      adminRoleBadge.style.color = roleColors[userData.adminRole].text;
+    }
+    
+    // Show master dashboard for CEO
+    if (userData.adminRole === 'CEO') {
+      menuMasterDashboard.style.display = 'flex';
+    }
+    
+    // Update role info card
+    updateRoleInfoCard(userData);
+    
+    // Update pending applications count
+    updatePendingApplicationsBadge();
+  }
+}
+
+function updateRoleInfoCard(userData) {
+  const roleInfoContent = document.getElementById('roleInfoContent');
+  const roleTypeBadge = document.getElementById('roleTypeBadge');
+  
+  if (userData.adminRole) {
+    const role = userData.adminRole;
+    const roleColor = roleColors[role]?.bg || '#a855f7';
+    
+    roleTypeBadge.textContent = role;
+    roleTypeBadge.style.background = `linear-gradient(135deg, ${roleColor}, ${roleColor}99)`;
+    roleTypeBadge.style.color = roleColors[role]?.text || '#fff';
+    
+    roleInfoContent.innerHTML = `
+      <div style="text-align: center; margin-bottom: 25px;">
+        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}99); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 32px;">
+          <i class="fas ${roleColors[role]?.icon || 'fa-user-shield'}"></i>
+        </div>
+        <h3 style="color: #fff; margin-bottom: 10px; font-size: 24px;">${role}</h3>
+        <p style="color: #ccc; font-size: 15px; max-width: 400px; margin: 0 auto;">
+          You have been assigned as ${role}. Access your admin dashboard for role-specific tools and features.
+        </p>
+      </div>
+      <button class="action-btn" id="goToAdminDashboardBtn" style="width: 100%;">
+        <i class="fas ${roleColors[role]?.icon || 'fa-tachometer-alt'}"></i> Open ${role} Dashboard
+      </button>
+    `;
+    
+    // Add event listener for admin dashboard button
+    setTimeout(() => {
+      const goToAdminBtn = document.getElementById('goToAdminDashboardBtn');
+      if (goToAdminBtn) {
+        goToAdminBtn.addEventListener('click', () => {
+          window.location.href = 'admin-dashboard-template.html';
+        });
+      }
+    }, 100);
+    
+  } else {
+    roleTypeBadge.textContent = 'Basic Member';
+    roleTypeBadge.style.background = 'linear-gradient(135deg, #a855f7, #6366f1)';
+    roleTypeBadge.style.color = '#fff';
+    
+    roleInfoContent.innerHTML = `
+      <p style="color: #ccc; margin-bottom: 25px; line-height: 1.6;">You are currently a basic member. Apply for a specialized role to unlock more features and responsibilities in SODIUM.</p>
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 16px; margin-bottom: 25px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+          <i class="fas fa-info-circle" style="color: #60a5fa; font-size: 18px;"></i>
+          <span style="font-weight: 600; color: #60a5fa;">Benefits of Having a Role:</span>
+        </div>
+        <ul class="role-benefits">
+          <li><i class="fas fa-check-circle"></i> Access to specialized projects</li>
+          <li><i class="fas fa-check-circle"></i> Priority event registration</li>
+          <li><i class="fas fa-check-circle"></i> Department-specific resources</li>
+          <li><i class="fas fa-check-circle"></i> Leadership opportunities</li>
+        </ul>
+      </div>
+      <button class="action-btn secondary" id="learnMoreRolesBtn" style="width: 100%;">
+        <i class="fas fa-graduation-cap"></i> Learn About Available Roles
+      </button>
+    `;
+    
+    // Reattach event listener
+    setTimeout(() => {
+      const learnMoreBtn = document.getElementById('learnMoreRolesBtn');
+      if (learnMoreBtn) {
+        learnMoreBtn.addEventListener('click', () => {
+          window.location.href = 'role.html';
+        });
+      }
+    }, 100);
+  }
+}
+
+function checkPendingApplication(userData) {
+  const pendingApp = localStorage.getItem(`sodium_pending_application_${userData.uid}`);
+  
+  if (pendingApp) {
+    const application = JSON.parse(pendingApp);
+    
+    // Update role status card
+    document.getElementById('currentRoleDesc').innerHTML = `
+      <i class="fas fa-clock" style="color: #f59e0b;"></i> 
+      Your application for <strong>${application.role}</strong> is pending review.
+    `;
+    document.getElementById('currentRoleBadge').textContent = 'Application Pending';
+    document.getElementById('currentRoleBadge').style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+  }
+}
+
+function updateStats(userData) {
+  // In a real app, these would come from backend
+  document.getElementById('eventsCount').textContent = Math.floor(Math.random() * 8) + 2;
+  document.getElementById('achievementsCount').textContent = Math.floor(Math.random() * 10) + 3;
+  document.getElementById('connectionsCount').textContent = Math.floor(Math.random() * 100) + 20;
+}
+
+function updatePendingApplicationsBadge() {
+  const applications = JSON.parse(localStorage.getItem('sodium_role_applications') || '[]');
+  const pendingCount = applications.filter(a => a.status === 'pending').length;
+  const badge = document.getElementById('adminPendingBadge');
+  
+  if (badge) {
+    badge.textContent = pendingCount;
+    badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+  }
+}
+
+function setupEventListeners(userData) {
+  // Sidebar toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  const closeSidebar = document.getElementById('closeSidebar');
+  
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.add('active');
+    sidebarOverlay.classList.add('active');
+  });
+  
+  closeSidebar.addEventListener('click', () => {
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+  
+  sidebarOverlay.addEventListener('click', () => {
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+  
+  // Menu navigation
+  document.getElementById('menuDashboard').addEventListener('click', (e) => {
+    e.preventDefault();
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+  
+  document.getElementById('menuProfile').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('Profile page coming soon!');
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+  
+  document.getElementById('menuEvents').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('Events page coming soon!');
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+  
+  document.getElementById('menuProjects').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('Projects page coming soon!');
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+  
+  document.getElementById('menuGetRole').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = 'role.html';
+  });
+  
+  document.getElementById('menuDepartment').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = 'index.html#departments';
+  });
+  
+  document.getElementById('menuAchievements').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('Achievements page coming soon!');
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+  
+  document.getElementById('menuSettings').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('Settings page coming soon!');
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+  
+  document.getElementById('menuHelp').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('Help & Support coming soon!');
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+  
+  // Admin menu items
+  if (document.getElementById('menuAdminDashboard')) {
+    document.getElementById('menuAdminDashboard').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = 'admin-dashboard-template.html';
+    });
+  }
+  
+  if (document.getElementById('menuRoleManagement')) {
+    document.getElementById('menuRoleManagement').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    });
+  }
+  
+  if (document.getElementById('menuMasterDashboard')) {
+    document.getElementById('menuMasterDashboard').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = 'master-dashboard.html';
+    });
+  }
+  
+  // Main action buttons
+  document.getElementById('joinEventBtn').addEventListener('click', () => {
+    alert('Event registration coming soon!');
+  });
+  
+  document.getElementById('applyRoleBtn').addEventListener('click', () => {
+    window.location.href = 'role.html';
+  });
+  
+  document.getElementById('exploreBtn').addEventListener('click', () => {
+    window.location.href = 'index.html#departments';
+  });
+  
+  // Logout
+  document.getElementById('menuLogout').addEventListener('click', async () => {
+    if (firebaseLoaded && auth) {
+      try {
+        await window.firebaseAuth.signOut(auth);
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    }
+    
+    // Clear local storage
+    localStorage.removeItem('sodium_user_data');
+    localStorage.removeItem('sodium_admin_user');
+    
+    // Redirect to login
+    window.location.href = 'login.html';
+  });
+}
 </script>
 </body>
 </html>
