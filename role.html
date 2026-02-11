@@ -1,1 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SODIUM • Apply for Role</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Add Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyAUVsLH-YZdbhnH5U8tuS-31bTrPz6CZ8g",
+    authDomain: "sodium-b5392.firebaseapp.com",
+    projectId: "sodium-b5392",
+    storageBucket: "sodium-b5392.firebasestorage.app",
+    messagingSenderId: "21034072519",
+    appId: "1:21034072519:web:258c82eb4cfed599c301e2",
+    measurementId: "G-E0F44QQMD0"
+  };
 
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  
+  window.firebaseAuth = { app, auth, db, onAuthStateChanged, doc, getDoc };
+</script>
+<style>
+:root {
+  --bg-dark: #050505;
+  --purple: #a855f7;
+  --blue: #6366f1;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255,255,255,0.15);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background: var(--bg-dark); color:#fff; overflow-x:hidden; min-height: 100vh;}
+
+/* Animated Background Blobs */
+.blob {position:fixed; border-radius:50%; filter: blur(80px); z-index:-1;}
+.blob1{width:500px;height:500px; background:radial-gradient(circle,#a855f780,transparent); top:10%; left:10%; animation:move1 25s infinite alternate;}
+.blob2{width:600px;height:600px; background:radial-gradient(circle,#6366f180,transparent); bottom:0; right:5%; animation:move2 30s infinite alternate;}
+@keyframes move1{0%{transform:translate(0,0);}100%{transform:translate(50px,60px);}}
+@keyframes move2{0%{transform:translate(0,0);}100%{transform:translate(-70px,-40px);}}
+
+/* Header */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 60px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.logo-text {
+  font-weight: 700;
+  color: #fff;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.logo-text span {
+  color: var(--purple);
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+
+/* Role Application Container */
+.role-container {
+  padding: 150px 60px 60px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.role-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.role-header h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.role-header p {
+  color: #ccc;
+  font-size: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Role Application Form */
+.role-form {
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 0 40px rgba(168, 85, 247, 0.2);
+}
+
+.form-section {
+  margin-bottom: 30px;
+}
+
+.form-section h3 {
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.form-group label .required {
+  color: #f87171;
+}
+
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  transition: all 0.3s;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+}
+
+.form-textarea {
+  min-height: 150px;
+  resize: vertical;
+  font-family: 'Inter', sans-serif;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 5px;
+}
+
+.char-count.warning {
+  color: #f59e0b;
+}
+
+.char-count.error {
+  color: #f87171;
+}
+
+/* Role Cards Grid */
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.role-card {
+  background: rgba(255,255,255,0.03);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.role-card:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(168, 85, 247, 0.3);
+  transform: translateY(-5px);
+}
+
+.role-card.selected {
+  background: rgba(168, 85, 247, 0.1);
+  border-color: var(--purple);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.role-card h4 {
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.role-card p {
+  font-size: 13px;
+  color: #aaa;
+  line-height: 1.5;
+}
+
+.role-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.role-editor .role-icon { background: linear-gradient(135deg, #8b5cf6, #a855f7); }
+.role-designer .role-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+.role-researcher .role-icon { background: linear-gradient(135deg, #10b981, #34d399); }
+.role-narrator .role-icon { background: linear-gradient(135deg, #6366f1, #818cf8); }
+.role-competitive .role-icon { background: linear-gradient(135deg, #ef4444, #f87171); }
+.role-developer .role-icon { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+.role-media .role-icon { background: linear-gradient(135deg, #8b5cf6, #c4b5fd); }
+.role-gaming .role-icon { background: linear-gradient(135deg, #ec4899, #f472b6); }
+
+.checkmark {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 20px;
+  height: 20px;
+  background: var(--purple);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.role-card.selected .checkmark {
+  opacity: 1;
+}
+
+/* Role Categories */
+.role-category {
+  margin-bottom: 30px;
+}
+
+.role-category h4 {
+  color: #aaa;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Message Display */
+.message {
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.message.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  display: block;
+}
+
+.message.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  display: block;
+}
+
+.message.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .role-container {
+    padding: 130px 25px 40px;
+  }
+  
+  .role-form {
+    padding: 30px 25px;
+  }
+  
+  header {
+    padding: 15px 25px;
+  }
+  
+  .roles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .role-header h1 {
+    font-size: 28px;
+  }
+  
+  .role-header p {
+    font-size: 14px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">S</div>
+    <div class="logo-text">SOD<span>IUM</span></div>
+  </div>
+  
+  <a href="member.html" class="back-btn">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+</header>
+
+<div class="role-container">
+  <div class="role-header">
+    <h1>Apply for a SODIUM Role</h1>
+    <p>Choose a role that matches your skills and interests. Your application will be reviewed by our admin team.</p>
+  </div>
+  
+  <form id="roleApplicationForm" class="role-form">
+    <div class="message" id="formMessage"></div>
+    
+    <!-- User Information Section -->
+    <div class="form-section">
+      <h3><i class="fas fa-user"></i> Your Information</h3>
+      
+      <div class="form-group">
+        <label>Full Name <span class="required">*</span></label>
+        <input type="text" id="applicantName" class="form-input" placeholder="Enter your full name" required readonly>
+      </div>
+      
+      <div class="form-group">
+        <label>Email Address <span class="required">*</span></label>
+        <input type="email" id="applicantEmail" class="form-input" placeholder="Enter your email" required readonly>
+      </div>
+      
+      <div class="form-group">
+        <label>Username <span class="required">*</span></label>
+        <input type="text" id="applicantUsername" class="form-input" placeholder="Your username" required readonly>
+      </div>
+    </div>
+    
+    <!-- Role Selection Section -->
+    <div class="form-section">
+      <h3><i class="fas fa-user-tag"></i> Select Your Desired Role</h3>
+      <p style="color: #aaa; margin-bottom: 20px; font-size: 14px;">Choose one role that best fits your skills and interests</p>
+      
+      <!-- Normal Member Roles -->
+      <div class="role-category">
+        <h4>Normal Member Roles</h4>
+        <div class="roles-grid">
+          <!-- Video Editor -->
+          <div class="role-card role-editor" data-role="Video Editor">
+            <div class="role-icon">
+              <i class="fas fa-video"></i>
+            </div>
+            <h4>Video Editor <i class="fas fa-film"></i></h4>
+            <p>Edit and produce video content for SODIUM media channels</p>
+            <div class="checkmark">✓</div>
+          </div>
+          
+          <!-- Graphics Designer -->
+          <div class="role-card role-designer" data-role="Graphics Designer">
+            <div class="role-icon">
+              <i class="fas fa-palette"></i>
+            </div>
+            <h4>Graphics Designer <i class="fas fa-paint-brush"></i></h4>
+            <p>Create visual content, logos, banners, and promotional materials</p>
+            <div class="checkmark">✓</div>
+          </div>
+          
+          <!-- Researcher & Script Writer -->
+          <div class="role-card role-researcher" data-role="Researcher & Script Writer">
+            <div class="role-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h4>Researcher & Script Writer <i class="fas fa-file-alt"></i></h4>
+            <p>Research topics and write scripts for SODIUM content</p>
+            <div class="checkmark">✓</div>
+          </div>
+          
+          <!-- Narrator -->
+          <div class="role-card role-narrator" data-role="Narrator">
+            <div class="role-icon">
+              <i class="fas fa-microphone"></i>
+            </div>
+            <h4>Narrator <i class="fas fa-comment-dots"></i></h4>
+            <p>Provide voiceovers and narration for SODIUM videos</p>
+            <div class="checkmark">✓</div>
+          </div>
+          
+          <!-- Competitive IT -->
+          <div class="role-card role-competitive" data-role="Competitive IT">
+            <div class="role-icon">
+              <i class="fas fa-trophy"></i>
+            </div>
+            <h4>Competitive IT <i class="fas fa-code"></i></h4>
+            <p>Participate in coding competitions, hackathons, and tech challenges</p>
+            <div class="checkmark">✓</div>
+          </div>
+          
+          <!-- Development IT -->
+          <div class="role-card role-developer" data-role="Development IT">
+            <div class="role-icon">
+              <i class="fas fa-laptop-code"></i>
+            </div>
+            <h4>Development IT <i class="fas fa-cogs"></i></h4>
+            <p>Develop software, websites, and applications for SODIUM projects</p>
+            <div class="checkmark">✓</div>
+          </div>
+          
+          <!-- Media -->
+          <div class="role-card role-media" data-role="Media">
+            <div class="role-icon">
+              <i class="fas fa-photo-video"></i>
+            </div>
+            <h4>Media <i class="fas fa-bullhorn"></i></h4>
+            <p>Manage social media, content strategy, and community engagement</p>
+            <div class="checkmark">✓</div>
+          </div>
+          
+          <!-- Gaming -->
+          <div class="role-card role-gaming" data-role="Gaming">
+            <div class="role-icon">
+              <i class="fas fa-gamepad"></i>
+            </div>
+            <h4>Gaming <i class="fas fa-dice"></i></h4>
+            <p>Organize gaming events, tournaments, and gaming content creation</p>
+            <div class="checkmark">✓</div>
+          </div>
+        </div>
+      </div>
+      
+      <input type="hidden" id="selectedRole" name="selectedRole" required>
+    </div>
+    
+    <!-- Application Details Section -->
+    <div class="form-section">
+      <h3><i class="fas fa-file-alt"></i> Application Details</h3>
+      
+      <div class="form-group">
+        <label>Why do you want this role? <span class="required">*</span></label>
+        <textarea id="roleMotivation" class="form-textarea" placeholder="Explain why you're interested in this role and what you hope to contribute (200 words maximum)" required maxlength="2000"></textarea>
+        <div class="char-count" id="motivationCount">0/2000 characters</div>
+      </div>
+      
+      <div class="form-group">
+        <label>Relevant Experience <span class="required">*</span></label>
+        <textarea id="roleExperience" class="form-textarea" placeholder="Describe your relevant skills, experience, or portfolio (200 words maximum)" required maxlength="2000"></textarea>
+        <div class="char-count" id="experienceCount">0/2000 characters</div>
+      </div>
+      
+      <div class="form-group">
+        <label>Availability <span class="required">*</span></label>
+        <select id="availability" class="form-select" required>
+          <option value="">Select your availability</option>
+          <option value="full-time">Full-time (40+ hours/week)</option>
+          <option value="part-time">Part-time (20-40 hours/week)</option>
+          <option value="weekends">Weekends only</option>
+          <option value="flexible">Flexible schedule</option>
+          <option value="limited">Limited hours (specify in description)</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Portfolio/Examples (Optional)</label>
+        <textarea id="portfolioLinks" class="form-textarea" placeholder="Link to your portfolio, GitHub, YouTube channel, or examples of your work" maxlength="500"></textarea>
+        <div class="char-count" id="portfolioCount">0/500 characters</div>
+      </div>
+    </div>
+    
+    <button type="submit" class="submit-btn" id="submitBtn">
+      <span class="btn-text">Submit Application</span>
+    </button>
+  </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  // Wait for Firebase to load
+  await new Promise(resolve => {
+    const checkFirebase = setInterval(() => {
+      if (window.firebaseAuth) {
+        clearInterval(checkFirebase);
+        resolve();
+      }
+    }, 100);
+  });
+  
+  const { auth, db, onAuthStateChanged, doc, getDoc } = window.firebaseAuth;
+  
+  let userData = null;
+  let selectedRole = '';
+  
+  // Check authentication state
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      try {
+        // Get user data from Firestore
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        
+        if (userDoc.exists()) {
+          userData = userDoc.data();
+          userData.uid = user.uid;
+          
+          // Populate user information
+          populateUserInfo(userData);
+          
+          // Setup event listeners
+          setupEventListeners(userData);
+          
+          // Check if user already has a role application
+          checkExistingApplication(userData);
+        } else {
+          console.error('User data not found');
+          redirectToDashboard();
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        // For demo purposes, create demo user data
+        userData = {
+          uid: 'demo_user',
+          name: 'Demo User',
+          email: user.email || 'demo@example.com',
+          username: 'demo'
+        };
+        populateUserInfo(userData);
+        setupEventListeners(userData);
+      }
+    } else {
+      redirectToLogin();
+    }
+  });
+  
+  function populateUserInfo(userData) {
+    document.getElementById('applicantName').value = userData.name;
+    document.getElementById('applicantEmail').value = userData.email;
+    document.getElementById('applicantUsername').value = userData.username;
+  }
+  
+  function setupEventListeners(userData) {
+    // Role selection
+    const roleCards = document.querySelectorAll('.role-card');
+    roleCards.forEach(card => {
+      card.addEventListener('click', () => {
+        // Remove selected class from all cards
+        roleCards.forEach(c => c.classList.remove('selected'));
+        
+        // Add selected class to clicked card
+        card.classList.add('selected');
+        
+        // Update selected role
+        selectedRole = card.getAttribute('data-role');
+        document.getElementById('selectedRole').value = selectedRole;
+      });
+    });
+    
+    // Character counters
+    setupCharacterCounter('roleMotivation', 'motivationCount');
+    setupCharacterCounter('roleExperience', 'experienceCount');
+    setupCharacterCounter('portfolioLinks', 'portfolioCount');
+    
+    // Form submission
+    const form = document.getElementById('roleApplicationForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Validate form
+      if (!validateForm()) {
+        return;
+      }
+      
+      // Set loading state
+      submitBtn.disabled = true;
+      btnText.innerHTML = '<span class="spinner"></span> Submitting Application...';
+      
+      // Prepare application data
+      const applicationData = {
+        userId: userData.uid,
+        name: userData.name,
+        email: userData.email,
+        username: userData.username,
+        role: selectedRole,
+        motivation: document.getElementById('roleMotivation').value.trim(),
+        experience: document.getElementById('roleExperience').value.trim(),
+        availability: document.getElementById('availability').value,
+        portfolio: document.getElementById('portfolioLinks').value.trim(),
+        submittedAt: new Date().toISOString(),
+        status: 'pending',
+        reviewedBy: null,
+        reviewDate: null,
+        notes: null
+      };
+      
+      // Save application (using localStorage for demo)
+      saveApplication(applicationData);
+      
+      // Show success message
+      showMessage('Application submitted successfully! Our admin team will review it soon.', 'success');
+      
+      // Reset form
+      form.reset();
+      roleCards.forEach(card => card.classList.remove('selected'));
+      selectedRole = '';
+      
+      // Reset button state after 3 seconds
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Submit Application';
+        
+        // Redirect to dashboard after 2 more seconds
+        setTimeout(() => {
+          window.location.href = 'member.html';
+        }, 2000);
+      }, 3000);
+    });
+  }
+  
+  function setupCharacterCounter(textareaId, counterId) {
+    const textarea = document.getElementById(textareaId);
+    const counter = document.getElementById(counterId);
+    
+    textarea.addEventListener('input', () => {
+      const length = textarea.value.length;
+      const maxLength = parseInt(textarea.getAttribute('maxlength'));
+      const percentage = (length / maxLength) * 100;
+      
+      counter.textContent = `${length}/${maxLength} characters`;
+      
+      // Update color based on percentage
+      counter.className = 'char-count';
+      if (percentage > 80 && percentage < 95) {
+        counter.classList.add('warning');
+      } else if (percentage >= 95) {
+        counter.classList.add('error');
+      }
+    });
+    
+    // Trigger initial count
+    textarea.dispatchEvent(new Event('input'));
+  }
+  
+  function validateForm() {
+    const formMessage = document.getElementById('formMessage');
+    
+    // Check if role is selected
+    if (!selectedRole) {
+      showMessage('Please select a role to apply for.', 'error');
+      return false;
+    }
+    
+    // Check required fields
+    const requiredFields = ['roleMotivation', 'roleExperience', 'availability'];
+    for (const fieldId of requiredFields) {
+      const field = document.getElementById(fieldId);
+      if (!field.value.trim()) {
+        showMessage(`Please fill in the "${field.previousElementSibling.textContent}" field.`, 'error');
+        field.focus();
+        return false;
+      }
+    }
+    
+    // Check word count for textareas (approximately 200 words)
+    const motivation = document.getElementById('roleMotivation').value.trim();
+    const experience = document.getElementById('roleExperience').value.trim();
+    
+    const motivationWords = motivation.split(/\s+/).filter(word => word.length > 0).length;
+    const experienceWords = experience.split(/\s+/).filter(word => word.length > 0).length;
+    
+    if (motivationWords < 50) {
+      showMessage('Please write at least 50 words about why you want this role.', 'error');
+      return false;
+    }
+    
+    if (experienceWords < 50) {
+      showMessage('Please write at least 50 words about your relevant experience.', 'error');
+      return false;
+    }
+    
+    return true;
+  }
+  
+  function saveApplication(applicationData) {
+    try {
+      // Try to save to Firebase if available
+      if (window.firebaseAdmin) {
+        // In a real app, you would save to Firestore here
+        console.log('Would save to Firestore:', applicationData);
+      }
+      
+      // Save to localStorage for demo
+      let applications = JSON.parse(localStorage.getItem('sodium_role_applications') || '[]');
+      applications.push(applicationData);
+      localStorage.setItem('sodium_role_applications', JSON.stringify(applications));
+      
+      // Also save to session for current user
+      localStorage.setItem(`sodium_pending_application_${applicationData.userId}`, JSON.stringify(applicationData));
+      
+      console.log('Application saved:', applicationData);
+      
+    } catch (error) {
+      console.error('Error saving application:', error);
+    }
+  }
+  
+  function checkExistingApplication(userData) {
+    const pendingApp = localStorage.getItem(`sodium_pending_application_${userData.uid}`);
+    
+    if (pendingApp) {
+      const application = JSON.parse(pendingApp);
+      showMessage(`You have a pending application for "${application.role}". You can submit a new application after the current one is reviewed.`, 'info');
+      
+      // Disable form
+      document.getElementById('roleApplicationForm').style.opacity = '0.5';
+      document.getElementById('roleApplicationForm').style.pointerEvents = 'none';
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('submitBtn').innerHTML = 'Application Pending Review';
+    }
+  }
+  
+  function showMessage(message, type) {
+    const formMessage = document.getElementById('formMessage');
+    formMessage.textContent = message;
+    formMessage.className = `message ${type}`;
+    formMessage.style.display = 'block';
+    
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+      formMessage.style.display = 'none';
+    }, 5000);
+  }
+  
+  function redirectToDashboard() {
+    window.location.href = 'member.html';
+  }
+  
+  function redirectToLogin() {
+    window.location.href = 'login.html';
+  }
+});
+</script>
+</body>
+</html>
