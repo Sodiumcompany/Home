@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SODIUM • Apply for Role</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg-dark: #050505;
+  --purple: #a855f7;
+  --blue: #6366f1;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255,255,255,0.15);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background: var(--bg-dark); color:#fff; overflow-x:hidden; min-height: 100vh;}
+
+/* Animated Background Blobs */
+.blob {position:fixed; border-radius:50%; filter: blur(80px); z-index:-1;}
+.blob1{width:500px;height:500px; background:radial-gradient(circle,#a855f780,transparent); top:10%; left:10%; animation:move1 25s infinite alternate;}
+.blob2{width:600px;height:600px; background:radial-gradient(circle,#6366f180,transparent); bottom:0; right:5%; animation:move2 30s infinite alternate;}
+@keyframes move1{0%{transform:translate(0,0);}100%{transform:translate(50px,60px);}}
+@keyframes move2{0%{transform:translate(0,0);}100%{transform:translate(-70px,-40px);}}
+
+/* Header */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 60px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.logo-text {
+  font-weight: 700;
+  color: #fff;
+  font-size: 24px;
+  letter-spacing: 2px;
+}
+
+.logo-text span {
+  color: var(--purple);
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+
+/* Role Container */
+.role-container {
+  padding: 150px 60px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.role-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.role-header h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.role-header p {
+  color: #ccc;
+  font-size: 18px;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Role Categories */
+.role-category {
+  margin-bottom: 40px;
+}
+
+.role-category h2 {
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.category-badge {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  padding: 5px 15px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: 15px;
+}
+
+/* Role Grid */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.role-card {
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 30px;
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+.role-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--purple);
+  box-shadow: 0 15px 30px rgba(168, 85, 247, 0.2);
+}
+
+.role-card.selected {
+  border: 2px solid var(--purple);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+}
+
+.role-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #fff;
+}
+
+.role-card h3 {
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.role-card p {
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.role-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255,255,255,0.1);
+  color: #ccc;
+}
+
+.checkmark {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 24px;
+  height: 24px;
+  background: var(--purple);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.role-card.selected .checkmark {
+  opacity: 1;
+}
+
+/* Role-specific icon colors */
+.role-editor .role-icon { background: linear-gradient(135deg, #8b5cf6, #a855f7); }
+.role-designer .role-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+.role-researcher .role-icon { background: linear-gradient(135deg, #10b981, #34d399); }
+.role-narrator .role-icon { background: linear-gradient(135deg, #6366f1, #818cf8); }
+.role-competitive .role-icon { background: linear-gradient(135deg, #ef4444, #f87171); }
+.role-developer .role-icon { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+.role-media .role-icon { background: linear-gradient(135deg, #8b5cf6, #c4b5fd); }
+.role-gaming .role-icon { background: linear-gradient(135deg, #ec4899, #f472b6); }
+
+/* Application Form */
+.application-form {
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 30px;
+  padding: 50px;
+  margin-top: 40px;
+}
+
+.form-section {
+  margin-bottom: 40px;
+}
+
+.form-section h3 {
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #ccc;
+}
+
+.form-group label .required {
+  color: #f87171;
+}
+
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 15px 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  transition: all 0.3s;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+}
+
+.form-textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 8px;
+}
+
+.char-count.warning {
+  color: #f59e0b;
+}
+
+.char-count.error {
+  color: #f87171;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(168, 85, 247, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Message Display */
+.message {
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.message.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  display: block;
+}
+
+.message.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  display: block;
+}
+
+.message.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  display: block;
+}
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .role-container {
+    padding: 140px 40px 40px;
+  }
+  
+  .role-header h1 {
+    font-size: 42px;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 15px 25px;
+  }
+  
+  .role-container {
+    padding: 130px 25px 40px;
+  }
+  
+  .role-header h1 {
+    font-size: 32px;
+  }
+  
+  .role-header p {
+    font-size: 16px;
+  }
+  
+  .role-category h2 {
+    font-size: 24px;
+  }
+  
+  .application-form {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">S</div>
+    <div class="logo-text">SOD<span>IUM</span></div>
+  </div>
+  
+  <a href="role.html" class="back-btn">
+    <i class="fas fa-arrow-left"></i> Back to Choice
+  </a>
+</header>
+
+<main class="role-container">
+  <!-- Loading State -->
+  <div class="loading-container" id="loadingContainer" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50vh;">
+    <div class="spinner" style="width: 50px; height: 50px;"></div>
+    <p style="color: #ccc; margin-top: 20px;">Loading available roles...</p>
+  </div>
+  
+  <!-- Content (hidden initially) -->
+  <div id="content" style="display: none;">
+    <div class="role-header">
+      <h1>Apply for a Role</h1>
+      <p>Choose a role that matches your skills and interests. Your application will be reviewed by our team.</p>
+    </div>
+    
+    <!-- Normal Member Roles -->
+    <div class="role-category">
+      <h2>Available Roles <span class="category-badge">8 Positions</span></h2>
+      <div class="role-grid" id="rolesGrid">
+        <!-- Video Editor -->
+        <div class="role-card role-editor" data-role="Video Editor">
+          <div class="role-icon"><i class="fas fa-video"></i></div>
+          <h3>Video Editor</h3>
+          <p>Edit and produce video content for SODIUM media channels. Create engaging visual stories.</p>
+          <div class="role-badge">Media</div>
+          <div class="checkmark"><i class="fas fa-check"></i></div>
+        </div>
+        
+        <!-- Graphics Designer -->
+        <div class="role-card role-designer" data-role="Graphics Designer">
+          <div class="role-icon"><i class="fas fa-palette"></i></div>
+          <h3>Graphics Designer</h3>
+          <p>Create visual content, logos, banners, and promotional materials for SODIUM.</p>
+          <div class="role-badge">Media</div>
+          <div class="checkmark"><i class="fas fa-check"></i></div>
+        </div>
+        
+        <!-- Researcher & Script Writer -->
+        <div class="role-card role-researcher" data-role="Researcher & Script Writer">
+          <div class="role-icon"><i class="fas fa-search"></i></div>
+          <h3>Researcher & Script Writer</h3>
+          <p>Research topics and write scripts for SODIUM content and video productions.</p>
+          <div class="role-badge">Media</div>
+          <div class="checkmark"><i class="fas fa-check"></i></div>
+        </div>
+        
+        <!-- Narrator -->
+        <div class="role-card role-narrator" data-role="Narrator">
+          <div class="role-icon"><i class="fas fa-microphone"></i></div>
+          <h3>Narrator</h3>
+          <p>Provide voiceovers and narration for SODIUM videos and presentations.</p>
+          <div class="role-badge">Media</div>
+          <div class="checkmark"><i class="fas fa-check"></i></div>
+        </div>
+        
+        <!-- Competitive IT -->
+        <div class="role-card role-competitive" data-role="Competitive IT">
+          <div class="role-icon"><i class="fas fa-trophy"></i></div>
+          <h3>Competitive IT</h3>
+          <p>Participate in coding competitions, hackathons, and tech challenges.</p>
+          <div class="role-badge">IT</div>
+          <div class="checkmark"><i class="fas fa-check"></i></div>
+        </div>
+        
+        <!-- Development IT -->
+        <div class="role-card role-developer" data-role="Development IT">
+          <div class="role-icon"><i class="fas fa-laptop-code"></i></div>
+          <h3>Development IT</h3>
+          <p>Develop software, websites, and applications for SODIUM projects.</p>
+          <div class="role-badge">IT</div>
+          <div class="checkmark"><i class="fas fa-check"></i></div>
+        </div>
+        
+        <!-- Media -->
+        <div class="role-card role-media" data-role="Media">
+          <div class="role-icon"><i class="fas fa-photo-video"></i></div>
+          <h3>Media</h3>
+          <p>Manage social media, content strategy, and community engagement.</p>
+          <div class="role-badge">Media</div>
+          <div class="checkmark"><i class="fas fa-check"></i></div>
+        </div>
+        
+        <!-- Gaming -->
+        <div class="role-card role-gaming" data-role="Gaming">
+          <div class="role-icon"><i class="fas fa-gamepad"></i></div>
+          <h3>Gaming</h3>
+          <p>Organize gaming events, tournaments, and gaming content creation.</p>
+          <div class="role-badge">Gaming</div>
+          <div class="checkmark"><i class="fas fa-check"></i></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Application Form -->
+    <div class="application-form">
+      <h3 style="font-size: 28px; margin-bottom: 30px; color: #fff;">Submit Your Application</h3>
+      
+      <div class="message" id="formMessage"></div>
+      
+      <form id="applicationForm">
+        <input type="hidden" id="selectedRole" name="selectedRole">
+        
+        <div class="form-section">
+          <h3><i class="fas fa-user"></i> Your Information</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="applicantName" class="form-input" readonly>
+            </div>
+            
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="applicantEmail" class="form-input" readonly>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" id="applicantUsername" class="form-input" readonly>
+            </div>
+            
+            <div class="form-group">
+              <label>Selected Role</label>
+              <input type="text" id="selectedRoleDisplay" class="form-input" readonly placeholder="Select a role above">
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3><i class="fas fa-file-alt"></i> Application Details</h3>
+          
+          <div class="form-group">
+            <label>Why do you want this role? <span class="required">*</span></label>
+            <textarea id="roleMotivation" class="form-textarea" placeholder="Explain why you're interested in this role and what you hope to contribute (minimum 50 words)" required maxlength="2000"></textarea>
+            <div class="char-count" id="motivationCount">0/2000 characters</div>
+          </div>
+          
+          <div class="form-group">
+            <label>Relevant Experience <span class="required">*</span></label>
+            <textarea id="roleExperience" class="form-textarea" placeholder="Describe your relevant skills, experience, or portfolio (minimum 50 words)" required maxlength="2000"></textarea>
+            <div class="char-count" id="experienceCount">0/2000 characters</div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Availability <span class="required">*</span></label>
+              <select id="availability" class="form-select" required>
+                <option value="">Select your availability</option>
+                <option value="full-time">Full-time (40+ hours/week)</option>
+                <option value="part-time">Part-time (20-40 hours/week)</option>
+                <option value="weekends">Weekends only</option>
+                <option value="flexible">Flexible schedule</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Portfolio/Examples (Optional)</label>
+              <input type="text" id="portfolio" class="form-input" placeholder="Link to your portfolio or examples">
+            </div>
+          </div>
+        </div>
+        
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="btn-text">Submit Application</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Get user data
+  const userData = JSON.parse(localStorage.getItem('sodium_user_data'));
+  
+  if (!userData) {
+    // No user data, redirect to login
+    window.location.href = 'login.html';
+    return;
+  }
+  
+  // Hide loading, show content
+  document.getElementById('loadingContainer').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+  
+  // Populate user information
+  document.getElementById('applicantName').value = userData.name || '';
+  document.getElementById('applicantEmail').value = userData.email || '';
+  document.getElementById('applicantUsername').value = userData.username || '';
+  
+  let selectedRole = '';
+  
+  // Role selection
+  const roleCards = document.querySelectorAll('.role-card');
+  const selectedRoleDisplay = document.getElementById('selectedRoleDisplay');
+  const selectedRoleInput = document.getElementById('selectedRole');
+  
+  roleCards.forEach(card => {
+    card.addEventListener('click', () => {
+      // Remove selected class from all cards
+      roleCards.forEach(c => c.classList.remove('selected'));
+      
+      // Add selected class to clicked card
+      card.classList.add('selected');
+      
+      // Update selected role
+      selectedRole = card.getAttribute('data-role');
+      selectedRoleDisplay.value = selectedRole;
+      selectedRoleInput.value = selectedRole;
+    });
+  });
+  
+  // Character counters
+  function setupCounter(textareaId, counterId) {
+    const textarea = document.getElementById(textareaId);
+    const counter = document.getElementById(counterId);
+    
+    textarea.addEventListener('input', () => {
+      const length = textarea.value.length;
+      const max = textarea.getAttribute('maxlength');
+      counter.textContent = `${length}/${max} characters`;
+      
+      if (length > max * 0.9) {
+        counter.classList.add('warning');
+      } else {
+        counter.classList.remove('warning');
+      }
+    });
+  }
+  
+  setupCounter('roleMotivation', 'motivationCount');
+  setupCounter('roleExperience', 'experienceCount');
+  
+  // Form submission
+  const form = document.getElementById('applicationForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const formMessage = document.getElementById('formMessage');
+  
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (!selectedRole) {
+      showMessage('Please select a role to apply for.', 'error');
+      return;
+    }
+    
+    const motivation = document.getElementById('roleMotivation').value.trim();
+    const experience = document.getElementById('roleExperience').value.trim();
+    const availability = document.getElementById('availability').value;
+    
+    if (!motivation || !experience || !availability) {
+      showMessage('Please fill in all required fields.', 'error');
+      return;
+    }
+    
+    // Word count validation (approx)
+    const motivationWords = motivation.split(/\s+/).length;
+    const experienceWords = experience.split(/\s+/).length;
+    
+    if (motivationWords < 20) {
+      showMessage('Please write at least 20 words for your motivation.', 'error');
+      return;
+    }
+    
+    if (experienceWords < 20) {
+      showMessage('Please write at least 20 words about your experience.', 'error');
+      return;
+    }
+    
+    // Set loading state
+    submitBtn.disabled = true;
+    submitBtn.querySelector('.btn-text').innerHTML = '<span class="spinner"></span> Submitting...';
+    
+    // Create application data
+    const applicationData = {
+      userId: userData.uid,
+      name: userData.name,
+      email: userData.email,
+      username: userData.username,
+      role: selectedRole,
+      motivation: motivation,
+      experience: experience,
+      availability: availability,
+      portfolio: document.getElementById('portfolio').value.trim(),
+      submittedAt: new Date().toISOString(),
+      status: 'pending'
+    };
+    
+    // Save to localStorage
+    const applications = JSON.parse(localStorage.getItem('sodium_role_applications') || '[]');
+    applications.push(applicationData);
+    localStorage.setItem('sodium_role_applications', JSON.stringify(applications));
+    
+    // Save user's pending application
+    localStorage.setItem(`sodium_pending_application_${userData.uid}`, JSON.stringify(applicationData));
+    
+    // Show success message
+    showMessage('Application submitted successfully! You will be redirected to your member dashboard.', 'success');
+    
+    // Reset button after delay
+    setTimeout(() => {
+      submitBtn.disabled = false;
+      submitBtn.querySelector('.btn-text').textContent = 'Submit Application';
+      
+      // Redirect to member dashboard
+      window.location.href = 'member.html';
+    }, 3000);
+  });
+  
+  function showMessage(message, type) {
+    formMessage.textContent = message;
+    formMessage.className = `message ${type}`;
+    formMessage.style.display = 'block';
+    
+    setTimeout(() => {
+      formMessage.style.display = 'none';
+    }, 5000);
+  }
+});
+</script>
+</body>
+</html>
