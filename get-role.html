@@ -72,6 +72,12 @@ header {
   color: var(--purple);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 .back-btn {
   display: flex;
   align-items: center;
@@ -85,11 +91,16 @@ header {
   cursor: pointer;
   transition: all 0.3s;
   text-decoration: none;
+  font-size: 14px;
 }
 
 .back-btn:hover {
   background: rgba(255,255,255,0.2);
   transform: translateY(-2px);
+}
+
+.back-btn i {
+  font-size: 14px;
 }
 
 /* Role Container */
@@ -295,6 +306,23 @@ header {
   box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
 }
 
+/* Fix for dropdown options */
+.form-select option {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 10px;
+}
+
+.form-select option:hover {
+  background-color: var(--purple);
+}
+
+/* For Firefox */
+.form-select option:checked {
+  background: var(--purple);
+  color: white;
+}
+
 .form-textarea {
   min-height: 150px;
   resize: vertical;
@@ -430,6 +458,22 @@ header {
   .application-form {
     padding: 30px;
   }
+  
+  .header-actions {
+    gap: 10px;
+  }
+  
+  .back-btn span {
+    display: none;
+  }
+  
+  .back-btn {
+    padding: 10px 15px;
+  }
+  
+  .back-btn i {
+    margin: 0;
+  }
 }
 
 @media (max-width: 576px) {
@@ -453,9 +497,12 @@ header {
     <div class="logo-text">SOD<span>IUM</span></div>
   </div>
   
-  <a href="role.html" class="back-btn">
-    <i class="fas fa-arrow-left"></i> Back to Choice
-  </a>
+  <div class="header-actions">
+    <a href="role.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back to Choice</span>
+    </a>
+  </div>
 </header>
 
 <main class="role-container">
