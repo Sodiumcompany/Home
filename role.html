@@ -72,6 +72,37 @@ header {
   color: var(--purple);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+
+.back-btn i {
+  font-size: 14px;
+}
+
 /* Main Container */
 .choice-container {
   padding: 150px 60px 60px;
@@ -306,6 +337,22 @@ header {
   .choice-card h2 {
     font-size: 26px;
   }
+  
+  .header-actions {
+    gap: 10px;
+  }
+  
+  .back-btn span {
+    display: none;
+  }
+  
+  .back-btn {
+    padding: 10px 15px;
+  }
+  
+  .back-btn i {
+    margin: 0;
+  }
 }
 </style>
 </head>
@@ -317,6 +364,13 @@ header {
   <div class="logo">
     <div class="logo-icon">S</div>
     <div class="logo-text">SOD<span>IUM</span></div>
+  </div>
+  
+  <div class="header-actions">
+    <a href="login.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back to Login</span>
+    </a>
   </div>
 </header>
 
